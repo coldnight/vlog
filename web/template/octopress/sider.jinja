@@ -1,0 +1,42 @@
+<aside role=sidebar>
+<section>
+    <h1>Recent Comments</h1>
+    <ul id="recent_posts">
+    {% for each in comments %}
+        <li class="post">
+            {{each.author}} Says: <span class="grey">{{each.date}}</span> <br/> <a href="/t/{{each.postid}}/{{each.id}}">#{{each.short_content}} </a>
+        </li>
+    {% endfor %}
+    </ul>
+</section>
+
+<section>
+    <h1>Category</h1>
+    <ul id="Category_list">
+    {% for cat in categories %}
+        <li class="category">
+            <a title="View all posts filed under {{cat.name}}" href="/category/{{cat.id}}/">{{cat.name}} <span class="tag_meta">({{cat.post_num}})</span></a>
+        </li>
+    {% endfor %}
+    </ul>
+</section>
+
+<section>
+    <h1>Tags</h1>
+    <p id="top_tags">
+    {% for tagi in tags %}
+        <a title="{{tagi.name}}" href="/tag/{{tagi.id}}/">{{tagi.name}}</a> <span class="tag_meta">({{tagi.post_num}})</span> 
+    {% endfor %}
+    </p>
+</section>
+
+<section>
+    <h1>Link Broll</h1>
+    <ul id="Category_list">
+    {% for link in links %}
+        <li class="category"><a href="{{ link.url }}" target="_blank">{{ link['text'] }}</a></li>
+    {% endfor %}
+    </ul>
+</section>
+
+</aside>

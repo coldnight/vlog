@@ -1,0 +1,41 @@
+{% extends "base.jinja" %}
+{% block head %}
+<script type="text/javascript">
+var defaultContent = ''
+</script>
+{% endblock %}
+{%block content %}
+<span id="h"></span>
+<h2>安全设置</h2>
+<p><strong>显示名称</strong> <input type="text" id="name" style="width:430px;" value="{{ user.name }}" tabindex="2" /> </p>
+<p><strong>旧密码</strong> <input type="password" id="oldpwd" style="width:430px;" tabindex="2" /> </p>
+<p><strong>新密码</strong> <input type="password" id="pwd" style="width:430px;" tabindex="2" /> </p>
+<p><strong>重复新密码</strong> <input type="password" id="pwd2" style="width:430px;" tabindex="2" /> </p>
+<p><button id="submit" class="bigbtn">更新</button></p>
+<script type="text/javascript">
+$("#submit").click(function(){
+    var name = $("#name").val();
+    var oldpwd = $("#oldpwd").val();
+    var pwd = $("#pwd").val();
+    var pwd2 = $("#pwd2").val();
+    var data = new Object;
+    data['name'] = name;
+    data['oldpwd'] = oldpwd;
+    data['pwd'] = pwd;
+    data['pwd2'] = pwd2;
+    $.ajax({
+        type: "POST",
+        url: "/admin/secure",
+        dataType: "json",
+        data:data,
+        success: function(data){
+            if (data.status) {
+                alert("成功");
+            }else{
+                alert(data.errmsg);
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

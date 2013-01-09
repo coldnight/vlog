@@ -1,0 +1,6 @@
+MYSQL_DB_HOST = 'localhost'
+MYSQL_DB_PORT = 3306
+MYSQL_DB_USER = 'root'
+MYSQL_DB_PWD=''
+MYSQL_DB_NAME= 'vlog'
+MYSQL_PRE = 'vlog_'

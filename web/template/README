@@ -1,0 +1,21 @@
+全局模板变量
+    LANGUAGE --  语言
+    SITE_TITLE -- 站点标题
+    POWERED --  驱动程序列表
+    title --- 标题
+
+admin_addpost.jinja
+    use_default_theme True/False
+    categories -- 分类 [{}, {}]
+    tags -- 标签[{},..]
+
+
+前台全局模板变量
+    keywords
+    description
+    comments
+    categoires
+    tags
+    links
+HOMEPAGE
+    posts

@@ -1,0 +1,33 @@
+
+<div id="epiceditor" style="width:800px;float:left;height:500px;margin-right:10px;"></div>
+<!-- rich editer -->
+<script type="text/javascript" src="/static/epiceditor/js/epiceditor.min.js"></script>
+<script type="text/javascript">
+var opts = {
+    container: 'epiceditor',
+    basePath: '/static/epiceditor',
+    clientSideStorage:false,
+    localStorageName: "epiceditor",
+    useNativeFullsreen:true,
+    parser: marked,
+    file: {
+        name: 'epiceditor',
+        defaultContent: defaultContent,
+        autoSave: 100
+    },
+    theme: {
+        base:'/themes/base/epiceditor.css',
+        preview: '/themes/preview/preview-dark.css',
+        editor: '/themes/editor/epic-dark.css'
+    },
+    focusOnLoad: false,
+    shortcut: {
+        modifier: 10,
+        fullscreen: 70,
+        preview: 80
+    }
+}
+var editor = new EpicEditor(opts)
+editor.load()
+</script>
+<!-- rich editer end -->

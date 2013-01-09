@@ -1,0 +1,45 @@
+{% extends "base.jinja" %}
+{% block head %}
+<script type="text/javascript">
+var defaultContent = ''
+</script>
+{% endblock %}
+{%block content %}
+<span id="h"></span>
+<h2>站点设置</h2>
+<p><strong>站点标题</strong> <input type="text" id="title" style="width:430px;" value="{{ option.site_title }}" tabindex="2" /> </p>
+<p><strong>站点副标题</strong> <input type="text" id="sub-title" style="width:430px;" value="{{ option.sub_title }}" tabindex="2" /> </p>
+<p><strong>站点描述</strong> <input type="text" id="desc" style="width:430px;" value="{{ option.description }}" tabindex="2" /> </p>
+<p><strong>站点关键字</strong> <input type="text" id="keywords" style="width:430px;" value="{{ option.keywords }}" tabindex="2" /> </p>
+<p><strong>每页显示文章数</strong> <input type="text" id="pagesize" style="width:430px;" value="{{ option.pagesize|default('10', true) }}" tabindex="2" /> </p>
+<p><button id="submit" class="bigbtn">更新</button></p>
+<script type="text/javascript">
+$("#submit").click(function(){
+    var title = $("#title").val();
+    var sub = $("#sub-title").val();
+    var desc = $("#desc").val();
+    var keywords = $("#keywords").val();
+    var pagesize = $("#pagesize").val();
+
+    var data = new Object();
+    data['site_title'] = title;
+    data['sub_title']= sub;
+    data['desc'] = desc;
+    data['keywords'] = keywords;
+    data['pagesize'] = pagesize;
+    $.ajax({
+        type: "POST",
+        url: "/admin/site",
+        dataType: "json",
+        data:data,
+        success: function(data){
+            if (data.status) {
+                alert("成功");
+            }else{
+                alert(data.errmsg);
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

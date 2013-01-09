@@ -1,0 +1,35 @@
+{% extends "base.jinja" %}
+{% block head %}
+<script type="text/javascript">
+var defaultContent = ''
+</script>
+{% endblock %}
+{%block content %}
+<span id="h"></span>
+<h2>添加页面</h2>
+<p><strong>标题</strong> <input type="text" id="title" style="width:430px;" value="" tabindex="2" /> </p>
+{% include "editor.jinja" %}
+<p><button id="submit" class="bigbtn">添加页面</button></p>
+<script type="text/javascript">
+$("#submit").click(function(){
+    var title = $("#title").val();
+    var source = editor.exportFile()
+    var content = editor.previewer.innerHTML
+
+    var data = {'title':title, 'content':content, 'source':source}
+    $.ajax({
+        type: "POST",
+        url: "/admin/addpage",
+        dataType: "json",
+        data:data,
+        success: function(data){
+            if (data.status) {
+                window.location='/admin/editpage/'+data.data;
+            }else{
+                alert(data.errmsg);
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

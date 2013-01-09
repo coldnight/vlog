@@ -1,0 +1,41 @@
+{% extends "base.jinja" %}
+{% block content %}
+<div class="blog-index">
+{% for obj in posts %}
+<article>
+   <header>
+       <h1 class="entry-title"><a href="/post/{{ obj.id}}" rel="bookmark" title="Permanent Link to {{obj.title}}">{{obj.title}}</a></h1>
+       <p class="meta">
+        <small>{{obj.date}} in 
+        {% for cate in obj.category %}
+        <a href="/category/{{ cate.id }}/" rel="category tag">{{cate.name}}</a> &nbsp;
+        {% endfor %}
+        <small> by <strong>{{ obj.author.name }}</strong></small>
+        <a href="/post/{{ obj.id }}#comment" title="Comment on {{obj.title}}"
+        class="count">{{obj.comment_num}}</a></small>
+       </p>
+   </header>
+   <div class="entry-content">{{ obj.short_content }}</div>
+    <small style="color:#999">Tags:
+        {% for tag in obj.tags %}
+        {{ tag.name }} &nbsp;
+        {% endfor %}
+    </small>
+   <footer>
+     <a rel="full-article" href="/post/{{obj.id}}">Read On</a>
+     {% if username and uid %}
+     <a style="float:right;" rel="full-article" href="/admin/editpost/{{obj.id}}"> Edit </a>
+     {% endif %}
+   </footer>
+</article>
+{% endfor %}
+
+   <nav role="pagination">
+       <div>
+        <a class="prev" href="#">&larr; Newer</a>
+         &nbsp;
+        <a class="next" href="#">Older &rarr;</a>
+       </div>
+   </nav>
+</div>
+{% endblock %}

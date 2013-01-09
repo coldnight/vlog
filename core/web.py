@@ -129,11 +129,34 @@ class Session(object):
 
 
 class BaseHandler(RequestHandler):
-    __loader = FileSystemLoader(TEMPLATE_PATH)
-    _env = Environment(loader = __loader)
+    template_path = TEMPLATE_PATH
+    _path_to_evn = {}
+    _USER_ = '__CURRNET_USER__'
+    _USER_ID_ = "__CURRENT_USER_ID__"
+    username = property(lambda self: self.get_secure_cookie(self._USER_))
+    uid = property(lambda self: self.get_secure_cookie(self._USER_ID_))
+
+    def login(self, username, uid, redirect = None):
+        self.set_secure_cookie(self._USER_, username, expires_days=None)
+        self.set_secure_cookie(self._USER_ID_, str(uid), expires_days = None)
+        if redirect:
+            self.redirect(redirect)
+
+    def logout(self, redirect = None):
+        self.clear_cookie(self._USER_)
+        self.clear_cookie(self._USER_ID_)
+        if redirect:
+            self.redirect(redirect)
+
 
     def render(self, template_path, **kwargs):
-        t = self._env.get_template(template_path)
+        env = self._path_to_evn.get(self.template_path)
+        if not env:
+            __loader = FileSystemLoader(self.template_path)
+            env = Environment(loader = __loader)
+            self._path_to_evn[self.template_path] = env
+        t = env.get_template(template_path)
+        kwargs['request'] = self.request
         content = t.render(**kwargs)
         self.finish(content)
 

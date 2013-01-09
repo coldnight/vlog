@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>{{ title }}</title>
+  <link href="/static/css/install.css" media="screen, projection" rel="stylesheet" type="text/css" />
+
+  <script src="/static/js/jquery.js"></script>
+</head>
+<body>
+  <header role="banner">
+    <hgroup>
+    <h1><a href="/">{{ title }}</a></h1>
+        <h2>随心记录点滴</h2>
+    </hgroup>
+  </header>
+  <div id="main">
+      <input type="hidden" id="step" value="{{ step }}" />
+      <div id="step1" class="form">
+          <p> 数据库主机
+          <input type="text" id="mysql_host" name="mysql_host"
+          value="localhost" />
+          </p>
+        <p> 数据库端口
+        <input type="text" id="mysql_port" name="mysql_port" value="3306" /></p>
+        <p> 数据库用户<input type="text" id="mysql_user" name="mysql_user"
+        value="root" /></p>
+        <p> 数据库密码<input type="text" id="mysql_pwd" name="mysql_pwd"
+        value="" /></p>
+        <p> 数据库名<input type="text" id="mysql_name" name="mysql_name"
+        value="vlog" /></p>
+        <p> 数据库表前缀<input type="text" id="mysql_prev" name="mysql_prev"
+        value="vlog_" /></p>
+      </div>
+      <div id="step2" class="form">
+        <p style="margin-left:100"> 站点标题 <input type="text"
+        id="site-title" name="site-title" value="vLogs" /></p>
+        <p> 站点副标题 <input type="text" id="sub-title" name="sub-title"
+        value="随心记录点滴" /></p>
+        <p> 站点描述<textarea id="desc" name="desc">随心记录点滴</textarea></p>
+        <p> 站点关键字 <input type="text" id="keywords" name="keywords"
+        value="vLogs, markdown" /></p>
+      </div>
+      <div id="step3" class="form">
+          <p> 管理员用户名 <input type="text" id="username" name="username"
+          value="admin" /></p>
+          <p> 管理员邮箱 <input type="text" id="email" name="email"
+          value="amdin@vLogs.com" /></p>
+        <p> 管理员密码 <input type="password" id="password" name="password" /></p>
+        <p> 重复密码 <input type="password" id="password2" name="password2" /></p>
+    </div>
+    <p><button id="next"> 下一步</button></p>
+    <p><button id="install"> 安装 </button></p>
+  </div>
+  <footer>
+    <p>
+    &copy; 2013 Copyright <a href="http://www.linuxzen.com">cold</a> - 
+    </p>
+  </footer>
+<script type="text/javascript">
+    function empty(){}
+    var step = Number($("#step").val());
+    var data = new Object();
+    $("#install").hide();
+    $("#step2").hide();
+    $("#step3").hide();
+    $("#next").click(function() {
+        var success = function(data){
+            if (data.status) {
+                if (step == 1){
+                    $("#step1").hide();
+                    $("#step2").show();
+                    step++;
+                    return;
+                }
+                if (step == 2){
+                    $("#step2").hide();
+                    $("#step3").show();
+                    step++;
+                    $("#install").show();
+                    $("#next").hide();
+                    return;
+                }
+            } else {
+                alert(data.errmsg);
+            }
+        }
+        data['step'] = step;
+        if (step == 1){
+            data['mysql_host'] = $("#mysql_host").val();
+            data['mysql_port'] = $("#mysql_port").val();
+            data['mysql_user'] = $("#mysql_user").val();
+            data['mysql_name'] = $("#mysql_name").val();
+            data['mysql_pwd'] =  $("#mysql_pwd").val();
+            data['mysql_prev'] = $("#mysql_prev").val();
+        }
+        if (step == 2) {
+            data['sub_title'] = $("#sub-title").val();
+            data['site_title'] = $("#site-title").val();
+            data['desc'] = $("#desc").val();
+            data['keywords'] = $("#keywords").val();
+        }
+        $.ajax({
+            type: "POST",
+            url: "/install/",
+            dataType: "json",
+            data: data,
+            success: success
+        });
+    });
+$("#install").click(function() {
+        data['username'] = $("#username").val();
+        data['email'] = $("#email").val();
+        data['password'] = $("#password").val();
+        data['password2'] = $("#password2").val();
+        data['step'] = step;
+        $.ajax({
+            type: "POST",
+            url: "/install/",
+            dataType: "json",
+            data: data,
+            success: function(data){
+                if (data.status) {
+                    window.location='/';
+                }else {
+                    alert(data.errmsg);
+                }
+            }
+        });
+});
+</script>
+</body>
+</html>

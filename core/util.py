@@ -11,10 +11,14 @@ import urllib2
 import logging
 import hashlib
 
+from datetime import datetime
+
 from config import DEBUG, LOG_PATH
 
 md5 = lambda s: hashlib.md5(s + '3d2535f2ecf1dd3b7b').hexdigest()
 
+NOW = lambda: datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+now = datetime.now()
 def make_active_code(loginname, email):
     return base64.b64encode(md5(loginname + email + time.time()))
 
@@ -64,4 +68,47 @@ def get_logger():
     logger.addHandler(handler)
     logger.setLevel(level) # change to DEBUG for higher verbosity
     return logger
+
+
+class HttpHelper(object):
+    def __init__(self, url, params = {}, method = 'GET'):
+        self._url = url
+        self._params = params
+        self._method = method
+        self.cookies = []
+        self.make_request()
+
+    def make_request(self):
+        params = urllib.urlencode(self._params)
+        method = self._method
+        url = self._url
+        if not self._url.startswith('http://'):
+            url = 'http://' + self._url
+        if method == 'GET':
+            self.request = urllib2.Request(url + "?" + params)
+        else:
+            self.request = urllib2.Request(url, params)
+        if self.cookies:
+            self.add_header('Cookie', ';'.join(self.cookies))
+
+    def add_header(self, key, val):
+        self.request.add_header(key, val)
+
+    def change(self, url, params = {}, method = 'GET'):
+        self._url = url
+        self._params = params
+        self._method = method
+        self.make_request()
+
+    def open(self):
+        response = urllib2.urlopen(self.request)
+        cookies = response.headers.dict.get('set-cookie')
+        if cookies:
+            self.cookies.append(cookies)
+        content = response.read()
+        try:
+            return json.loads(content)
+        except:
+            return content
+
 

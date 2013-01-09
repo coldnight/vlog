@@ -48,7 +48,8 @@ def load_apps():
                     result.update({key: cls})
     tmp = dict()
     for key in result:
-        nkey = key.replace('/index', '')
+        nkey = key.replace('index', '')
+        nkey = nkey.replace('//', '/')
         if nkey == '': nkey = '/'
         tmp[nkey] = result[key]
         # tmp[key] = result[key]

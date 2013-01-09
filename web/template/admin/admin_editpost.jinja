@@ -1,0 +1,102 @@
+{% extends "base.jinja" %}
+{%block content %}
+<div id="source" style="display:none;">{{ post.source }}</div>
+<script type="text/javascript">
+var defaultContent = $("#source").text()
+</script>
+
+<span id="h"></span>
+<h2>编辑文章 (<a href="{{request.path}}">重新载入</a> | 
+<a href="/post/{{post.id}}" target="_blank">查看该文章</a> | 
+<a href="/admin/del/post/{{post.id}}" rel="facebox[.thickstyle]">删除该文章</a>)</h2>
+<p id="text" style="color:red;"></p>
+<p>标题:
+    <!-- TODO 作者信息 -->
+    <input type="hidden" id="post_id" value="{{ post.id }}" />
+    <input type="text" id="title" style="width:430px;" value="{{ post.title}}" tabindex="2" />
+</p>
+{% include "editor.jinja" %}
+<p><button id="submit" class="bigbtn"> 提交编辑 </button></p>
+<p>标签: <input type="text" id="tags" style="width:360px;" value="{{post.ttags}}" tabindex="4" /> 用逗号分隔','<br/>
+
+<p>分类: <br />
+<div id="categires">
+    {% for cat in categories %}
+        {% if cat.id in post.cids %}
+            <input class="category" type="checkbox" value="{{ cat.id }}" checked /> {{ cat.name }} <br />
+        {% else %}
+            <input class="category" type="checkbox" value="{{ cat.id }}" /> {{ cat.name }} <br />
+        {%endif %}
+    {% endfor %}
+</div>
+<div id="addcate" style="display:none">
+    <p>分类名称 <input type="text" name="name" id="categoryname" />
+    <button id="btn_add_cate" class="btn"> 添加 </button></p>
+</div>
+<a id="click_add_cate">添加类别</a>
+<p>
+<label>关闭评论 <input type="checkbox" value="True" tabindex="5" /></label>
+
+</p>
+<script type="text/javascript">
+$("#click_add_cate").click(function(){$("#addcate").show()})
+
+$("#btn_add_cate").click(function() {
+    var name = $("#categoryname").val();
+    $.ajax({
+        type: "POST",
+        url: "/admin/addcategory",
+        dataType: "json",
+        data:{"name":name},
+        success: function(data){
+            if (data.status) {
+                alert("成功");
+                var cate = data.data;
+                $("#categires").append("<input class='category' type='checkbox' value='"+cate.id + "' /> " + cate.name + "<br />");
+                $("#addcate").hidden();
+            }else{
+                alert(data.errmsg);
+            }
+        }
+    });
+});
+
+$("#submit").click(function(){
+    editor.preview()
+    var title = $("#title").val();
+    var source = editor.exportFile()
+    var content = editor.previewer.innerHTML
+    var tags = $("#tags").val();
+    var category = new Array();
+    var _id = $("#post_id").val()
+    $(".category").each(function(i, el){
+        if (el.checked){
+            category.push(el.value);
+        }
+    });
+
+    if (!category){
+        alert("请选择类别");
+    }
+
+    cate = category.join();
+
+    var data = {'title':title, 'content':content, 'source':source,
+                'tags': tags, 'category':cate, "id":_id}
+    $.ajax({
+        type: "POST",
+        url: "/admin/editpost",
+        dataType: "json",
+        data:data,
+        success: function(data){
+            if (data.status) {
+                window.location='/admin/editpost/'+data.data;
+            } else {
+                alert(data.errmsg);
+            }
+        }
+    });
+});
+</script>
+
+{% endblock %}

@@ -9,7 +9,7 @@
 #
 #
 #
-import config
+import mycnf as config
 import MySQLdb as mysqldb
 from MySQLdb import escape_string
 
@@ -42,10 +42,11 @@ class Field(object):
 
 class DatabaseOp(object):
     """ 操作MySQL """
-    def __init__(self, conn, table):
+    def __init__(self, conn, table = None):
         self.conn = conn
         self.cursor = conn.cursor()
-        self.table = table
+        self.table = table if table.startswith(config.MYSQL_PRE) else \
+                config.MYSQL_PRE + table
         self.commit = False
         self.fields = self.get_table_fields()
         self.logger = get_logger()
@@ -60,7 +61,7 @@ class DatabaseOp(object):
         sv = sv.strip(',')
         sql += " VALUES(%s)" % sv
         self.commit = True
-        self.logger.debug('query mysql : {0}'.format(sql % tuple(values)))
+        self.logger.debug(u'query mysql : {0}'.format(sql % tuple(values)))
         self.cursor.execute(sql, values)
 
         return self.cursor.lastrowid
@@ -71,6 +72,12 @@ class DatabaseOp(object):
         if where:
             sql + ' where ' + where
 
+        self.cursor.execute(sql)
+        r = self.cursor.fetchall()
+        return r[0][0] if len(r) == 1 else 0
+
+    def max(self, field):
+        sql = 'select max(`{0}`) from ' + self.table
         self.cursor.execute(sql)
         r = self.cursor.fetchall()
         return r[0][0] if len(r) == 1 else 0
@@ -113,7 +120,8 @@ class DatabaseOp(object):
         sql += ' where ' + where
         self.logger.debug('query mysql : {0}'.format(sql))
         self.commit = True
-        return self.cursor.execute(sql)
+        self.cursor.execute(sql)
+        return self.cursor.lastrowid
 
     def remove(self, where = None):
         """ where 为None则清空表 """
@@ -127,7 +135,7 @@ class DatabaseOp(object):
     def _format_set(self, set_dict):
         result = ''
         for k, v in set_dict.items():
-            result += "`{0}`='{1}',".format(k, escape_string(str(v)))
+            result += "`{0}`='{1}',".format(k, self.escape(v))
         result = result.rstrip(',')
         return result
 
@@ -139,22 +147,26 @@ class DatabaseOp(object):
         return result
 
     def get_table_fields(self):
-        self.cursor.execute('describe ' + self.table)
-        fields = self.cursor.fetchall()
-        return Field(fields)
+        if self.table:
+            self.cursor.execute('describe ' + self.table)
+            fields = self.cursor.fetchall()
+            return Field(fields)
 
     def escape(self, value):
         """ 转义MySQL """
         if isinstance(value, (tuple, list)):
             return [self.escape(v) for v in value]
-        elif isinstance(value, (str, unicode)):
+        elif isinstance(value, str):
             return escape_string(value)
+        elif isinstance(value, unicode):
+            return escape_string(value.encode('utf-8'))
+        elif isinstance(value, (int, long, float)):
+            return str(value)
         else:
             return value
 
-
 class MySQLContext:
-    def __init__(self, table):
+    def __init__(self, table = None):
         self.conn = mysqldb.Connection(host=config.MYSQL_DB_HOST,
                                     port = config.MYSQL_DB_PORT,
                                     user = config.MYSQL_DB_USER,
@@ -177,3 +189,6 @@ class MySQLContext:
     def get_op(cls, table):
         lc = MySQLContext(table)
         return lc._op
+
+    def get_cursor(self):
+        return self.conn.cursor

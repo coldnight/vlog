@@ -1,0 +1,149 @@
+{% extends "base.jinja" %}
+{% block content %}
+<div>
+    <article class="hentry" role="article">
+        <header>
+        <h1 class="entry-title">{{post.title}}</h1>
+            <p class="meta">
+            <small>{{post.date}}
+                <a href="/post/{{post.id}}#comments" title="Comment on
+                    {{post.title}}" class="count">{{post.comment_num}}</a>
+                </small>
+            </p>
+
+        </header>
+        <div class="entry-content" id="postcondiv">{{post.content}}</div>
+        <footer>
+            <p class="meta grey">
+                <span>Posted by <strong>{{ post.author.name }}</strong></span>
+                {% if post.category %}
+                |
+                <span class="categories greyhref">
+                    category:
+                    {% for cate in post.category %}
+                    <a href="/category/{{ cate.id }}/" rel="category tag">{{cate.name}}</a> &nbsp;
+                    {% endfor %}
+                </span>
+                {% endif %}
+                {% if post.tags %}
+                <span class="categories greyhref">
+                  | Tags:
+                    {% for tag in post.tags %}
+                    {{ tag.name }} &nbsp;
+                    {% endfor %}
+                </span>
+                {% endif %}
+                
+                {% if username and uid %}
+                <span class="categories greyhref" style="float:right;">
+                    {% if ispage %}
+                    <a class="edit-link" href="/admin/editpage/{{post.id}}">Edit</a>
+                    {% else %}
+                    <a class="edit-link" href="/admin/editpost/{{post.id}}">Edit</a>
+                    {% endif %}
+                </span>
+                {% endif %}
+            </p>
+            
+            <div  style="display:block;margin-bottom:20px;">
+                <!-- JiaThis Button BEGIN -->
+                <div id="jiathis_style_32x32">
+                    <span class="jiathis_txt">分享到：</span>
+                    <a class="jiathis_button_tsina"></a>
+                    <a class="jiathis_button_ishare"></a>
+                    <a class="jiathis_button_renren"></a>
+                    <a class="jiathis_button_baidu"></a>
+                    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+                </div>
+                <script type="text/javascript" >
+                var jiathis_config={
+                summary:"",
+                hideMore:false
+                }
+                </script>
+                <script type="text/javascript" src="http://v2.jiathis.com/code_mini/jia.js" charset="utf-8"></script>
+                <!-- JiaThis Button END -->
+                <div class="c"></div>
+            </div>
+        </footer>
+    </article>
+    
+    <a name="comments"></a>
+    {% if post.comment_num > 0 %}
+    
+    <section>
+        <h1 class="topline">Comments</h1>
+        <div id="comments">
+            <h2 class="comments">There are {{post.comment_num}} Comments to
+                "{{post.title}}"</h2>
+            <ul class="singlecomments" id="commentlist">
+                {% include("comments.jinja") %}
+            </ul>
+            {% if pageinfo.totalpage > 1 %}
+            <p class="topline grey">
+            {% if pageinfo.pageindex > 1 %}
+            <a href="/post/{{post.id}}/{{pageinfo.prevpage}}#comments">上一页</a>
+            {% endif %}
+            {% if pageinfo.pageindex < pageinfo.totalpage %}
+            <a href="/post/{{post.id}}/{{pageinfo.nextpage}}#comments"> 下一页</a>
+            {% endif %}
+            </p>
+            {% endif %}
+            
+        </div>
+    </section>
+    
+    {% else %}
+    
+    <section id="commentsec" style="display:none;">
+        <h1 class="topline">Comments</h1>
+        <div id="comments">
+            <h2 class="comments">There are 1 Comment to "{{post.title}}"</h2>
+            <ul class="singlecomments" id="commentlist">
+            </ul>
+        </div>
+    </section>
+    
+    {% endif %} 
+    <!-- new comment -->
+    <section>
+    <div id="respond" class="topline">
+    {% include("newcomment.jinja") %}
+    </div>
+    </section>
+    <!-- new comment end -->
+    
+    {% if False %}
+    <!-- readmore comments -->
+    <script>
+    function goon(){
+    
+        var fromid = $("#commentlist li:last").attr('id').split("-")[1];
+        var showednum = $("#commentlist li").length;
+        
+        $.ajax({
+            type: 'POST',
+            url: '#{request.path}',
+            dataType: "json",
+            data: {'act': 'readmorecomment', 'fromid': fromid, 'showednum':showednum, 'allnum': '#{obj.comment_num}' },
+            success: function(data){
+                
+                if(data.status == 200){
+                    $('#commentlist').append(data.commentstr);
+                    $('#hasnum').text(data.lavenum);
+                    if(data.lavenum == 0){
+                        $('#idgoon').html('没有了！在下面补上一条吧！！');
+                    }
+                }
+            }
+            
+        });
+        
+        return false;
+    }
+    </script>
+    <!-- readmore comments end -->
+    {% endif %}
+    
+</div>
+{% endblock %}

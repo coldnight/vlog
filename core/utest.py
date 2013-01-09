@@ -15,7 +15,7 @@ def get_all_utest():
     modules = [m.split('.')[0]  for m in os.listdir(utest_path)
                if m.startswith('test_')]
     return [__import__('utest.{0}'
-            ''.format(m)).__dict__['utest'].__dict__[m] for m in modules]
+            ''.format(m)).__dict__[m] for m in modules]
 
 def load_all_utest():
     umodules = get_all_utest()

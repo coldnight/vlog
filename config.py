@@ -11,6 +11,8 @@ MYSQL_DB_HOST = 'localhost'
 MYSQL_DB_PORT = 3306
 MYSQL_DB_NAME = 'pec'
 MYSQL_DB_USER = 'root'
+#MYSQL_PRE = 'vlog_'
+MYSQL_PRE = ''
 MYSQL_DB_PWD = ''
 
 DEBUG = True
