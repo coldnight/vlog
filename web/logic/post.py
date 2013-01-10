@@ -109,7 +109,8 @@ class PostLogic(Logic):
             wids = "','".join(op.escape(ids))
             where = "`id` in ('{0}') and `enabled`='1' "\
                     "and `type`='1'".format(wids)
-            r = op.select(where = where, limit = limit)
+            order = {"id":-1}
+            r = op.select(where = where, order = order, limit = limit)
         total = self.count_posts(where).get("data")
         posts = self.insert_info(r)
         page_info = self.handle_page(total, index, size)
