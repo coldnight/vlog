@@ -4,7 +4,7 @@ vLog 是一个轻量级的日志/博客系统,使用Markdown格式书写博文,�
 #安装
 ##平台
 * Linux
-* python2.7+
+* python2.7
 * MySQL
 
 
