@@ -18,7 +18,15 @@ from config import DEBUG, LOG_PATH
 md5 = lambda s: hashlib.md5(s + '3d2535f2ecf1dd3b7b').hexdigest()
 
 NOW = lambda: datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-now = datetime.now()
+now = lambda: datetime.now()
+
+def utf8sub(content, start = 0, end = 50):
+    if isinstance(content, unicode):
+        return content[start:end]
+    if isinstance(content, str):
+        return content.decode('utf-8')[start:end].encode('utf-8')
+    return content
+
 def make_active_code(loginname, email):
     return base64.b64encode(md5(loginname + email + time.time()))
 

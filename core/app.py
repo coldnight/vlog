@@ -5,7 +5,7 @@
 import os
 from os.path import join
 from inspect import isclass
-from .web import BaseHandler
+from tornado.web import RequestHandler as BaseHandler
 from config import ROOT_PATH, STATIC_PATH, HANDLER, DEBUG
 
 def get_modules(pkg_name, pkg_path, filter_func):

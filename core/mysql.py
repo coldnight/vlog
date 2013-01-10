@@ -70,8 +70,9 @@ class DatabaseOp(object):
         """ 统计 """
         sql = 'select count(*) from ' + self.table
         if where:
-            sql + ' where ' + where
+            sql += ' where ' + where
 
+        self.logger.debug(sql)
         self.cursor.execute(sql)
         r = self.cursor.fetchall()
         return r[0][0] if len(r) == 1 else 0

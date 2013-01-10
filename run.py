@@ -18,12 +18,13 @@ def main(port = None):
     info = ''
     info += 'Running On Port: %s\n' % port
     apps = load_apps()
-    for k, v in apps.items():
-        info += '\t%-20s %s\n' % (k , v)
+    app_list = list(apps.items())
+    for a in app_list:
+        info += '\t%-20s %s\n' % (a[0] , a[1])
     logger.info(info)
     if settings.get('debug', False):
         logger.warn('Debug Mode is On')
-    app = Application(apps.items(), **settings)
+    app = Application(app_list, **settings)
     app.listen(port)
     IOLoop.instance().start()
 

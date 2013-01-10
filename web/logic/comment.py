@@ -7,7 +7,7 @@
 #   Desc    :   评论逻辑
 #
 from core.logic import Logic
-from core.util import md5
+from core.util import md5, utf8sub
 
 #TODO 邮件通知
 class CommentLogic(Logic):
@@ -33,7 +33,7 @@ class CommentLogic(Logic):
             where = "`pid`='{0}'".format(op.escape(pid))
             return op.count(where)
 
-    def get_post_comments(self, pid, index = 0, size = 10):
+    def get_post_comments(self, pid, index = 1, size = 10):
         with self._mc() as op:
             where = "`pid`='{0}'".format(op.escape(pid))
             limit = self.handle_limit(index, size)
@@ -54,9 +54,28 @@ class CommentLogic(Logic):
     def _insert_info(self, comment):
         email = comment.get('email', '')
         comment['gravatar'] = md5(email)
+        content = comment.get('content')
+        comment['short_content'] =  utf8sub(content, 0, 20)
         return comment
+
+    def _insert_post_title(self, comments, titles):
+        for comment in comments:
+            comment['post_title'] = titles.get(comment.get("pid"))
+
+        return comments
 
     def remove_comment(self, cid):
         with self._mc() as op:
             where = "`id`='{0}'".format(op.escape(cid))
             op.remove(where = where)
+
+    def get_last_comments(self, postlogic, size = 5):
+        with self._mc() as op:
+            order = {"id":-1}
+            limit = self.handle_limit(size = size)
+            r = op.select(order = order, limit = limit)
+        pids = [c.get('pid') for c in r]
+        titles = postlogic.get_titles(pids)
+        comments = self._insert_post_title(r, titles)
+        comments = self.insert_info(comments)
+        return comments

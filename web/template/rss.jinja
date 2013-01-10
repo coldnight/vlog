@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+    <title>{{ SITE_TITLE }}</title>
+    <atom:link href="http://{{request.host}}/feed" rel="self" type="application/rss+xml" />
+    <link>http://{{request.host}}</link>
+    <description>{{ description}}</description>
+    <lastBuildDate>{{ buildDate }}</lastBuildDate>
+	<language>zh-CN</language>
+	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updateFrequency>1</sy:updateFrequency>
+	<generator>vLogs</generator>
+    {% for post in posts %}
+		<item>
+            <title>{{ post.title }}</title>
+            <link>http://{{ request.post }}/post/{{post.id}}</link>
+            <comments>http://{{ request.post}}/post/{{post.id}}#comments</comments>
+            <pubDate>{{ post.rss_date }}</pubDate>
+            <dc:creator>{{ post.author.name }}</dc:creator>
+            {% for cate in post.category %}
+            <category><![CDATA[{{ cate.name }}]]></category>
+            {% endfor %}
+            {% for tag in post.ttags %}
+            <category><![CDATA[{{ tag}}]]></category>
+            {% endfor %}
+            <guid isPermaLink="true">http://{{request.host}}/post/{{post.id}}</guid>
+            <description><![CDATA[{{ post.short_content }}<a href="http://{{request.host}}/post/{{post.id}}">Continue reading <span class="meta-nav">&#8594;</span></a>]]></description>
+            <content:encoded><![CDATA[{{ post.content }} ]]></content:encoded>
+            <wfw:commentRss>http://{{ request.host }}/comment/feed/{{post.id}}</wfw:commentRss>
+            <slash:comments>{{ post.coment_num }}</slash:comments>
+		</item>
+        {% endfor %}
+	</channel>
+</rss>
+

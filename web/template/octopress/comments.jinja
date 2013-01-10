@@ -12,7 +12,11 @@
         <div class="fr">
         <a href="#respond" onclick="reply('{{cobj.id}}','{{cobj.name}}')">Reply</a>
         {% if uid and username and not cobj.allowed %}
-        <a href="/admin/allow/comment/{{post.id}}/{{cobj.id}}">Allow</a>
+        {% if ispage %}
+        <a href="/admin/allow/comment/{{post.id}}/{{cobj.id}}/page">Allow</a>
+        {% else %}
+        <a href="/admin/allow/comment/{{post.id}}/{{cobj.id}}/post">Allow</a>
+        {% endif %}
         {% endif %}</div>
         <div class="c"></div>
         </div> 

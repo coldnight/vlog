@@ -14,6 +14,7 @@ from uuid import uuid1
 from tornado.web import RequestHandler
 from jinja2 import Environment, FileSystemLoader
 from config import TEMPLATE_PATH
+from .util import get_logger
 
 class Session(object):
     """
@@ -135,6 +136,7 @@ class BaseHandler(RequestHandler):
     _USER_ID_ = "__CURRENT_USER_ID__"
     username = property(lambda self: self.get_secure_cookie(self._USER_))
     uid = property(lambda self: self.get_secure_cookie(self._USER_ID_))
+    logger = get_logger()
 
     def login(self, username, uid, redirect = None):
         self.set_secure_cookie(self._USER_, username, expires_days=None)
@@ -150,11 +152,11 @@ class BaseHandler(RequestHandler):
 
 
     def render(self, template_path, **kwargs):
-        env = self._path_to_evn.get(self.template_path)
+        env = BaseHandler._path_to_evn.get(self.template_path)
         if not env:
             __loader = FileSystemLoader(self.template_path)
             env = Environment(loader = __loader)
-            self._path_to_evn[self.template_path] = env
+            BaseHandler._path_to_evn[self.template_path] = env
         t = env.get_template(template_path)
         kwargs['request'] = self.request
         content = t.render(**kwargs)

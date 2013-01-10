@@ -6,8 +6,10 @@
 #   Date    :   12/12/31 09:36:32
 #   Desc    :   逻辑基类
 #
-from .db import MySQLContext as MC
+
 from functools import partial
+from .util import get_logger
+from .db import MySQLContext as MC
 
 class Logic(object):
     """ 逻辑基类 """
@@ -18,7 +20,8 @@ class Logic(object):
         else:
             self._table = self.__class__.__name__.lower().replace('logic', '')
         self._mc = partial(MC, self._table)
-
+        self.logger = get_logger()
+        self.logger.debug("%s init instance", self._table)
         self.init()
 
     def init(self):
@@ -35,7 +38,7 @@ class Logic(object):
                 'prevpage':prevpage, 'pageindex': pageindex,
                 'pagesize':pagesize}
 
-    def handle_limit(self, index, size = None):
+    def handle_limit(self, index = 1, size = None):
         index, size = int(index), int(size)
         if not size:
             return index

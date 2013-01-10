@@ -29,13 +29,18 @@
    </footer>
 </article>
 {% endfor %}
-
+{% if pageinfo.totalpage > 0 %}
    <nav role="pagination">
        <div>
-        <a class="prev" href="#">&larr; Newer</a>
+       {% if pageinfo.pageindex > 1 %}
+        <a class="prev" href="/1">&larr; Prev</a>
+        {% endif %}
          &nbsp;
+         {% if pageinfo.pageindex < pageinfo.totalpage %}
         <a class="next" href="#">Older &rarr;</a>
+        {% endif %}
        </div>
    </nav>
+{% endif %}
 </div>
 {% endblock %}
