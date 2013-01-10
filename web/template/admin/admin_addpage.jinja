@@ -12,9 +12,10 @@ var defaultContent = ''
 <p><button id="submit" class="bigbtn">添加页面</button></p>
 <script type="text/javascript">
 $("#submit").click(function(){
+    editor.preview();
     var title = $("#title").val();
     var source = editor.exportFile()
-    var content = editor.previewer.innerHTML
+    var content = editor.previewer.innerHTML;
 
     var data = {'title':title, 'content':content, 'source':source}
     $.ajax({

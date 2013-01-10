@@ -54,9 +54,10 @@ $("#btn_add_cate").click(function() {
 });
 
 $("#submit").click(function(){
+    editor.preview();
     var title = $("#title").val();
     var source = editor.exportFile()
-    var content = editor.previewer.innerHTML
+    var content = editor.previewer.innerHTML;
     var tags = $("#tags").val();
     var category = new Array();
     $(".category").each(function(i, el){
