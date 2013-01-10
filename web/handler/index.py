@@ -14,9 +14,6 @@ from tornado.web import StaticFileHandler
 from config import STATIC_PATH as STATIC_ROOT
 from core.web import BaseHandler
 
-from web.logic.code import insert_code, get_code
-from web.logic.code import get_option_tag
-
 from web.logic import Logic
 from web.logic.install import install
 from web.logic.sitemap import handle_sitemap
@@ -224,50 +221,3 @@ class SitemapHandler(StaticFileHandler):
 
     def get(self):
         StaticFileHandler.get(self, 'sitemap.xml')
-
-class PasteHandler(BaseHandler):
-    def get(self, rid = None):
-        html = ''
-        html += """<br /> <br />
-        <form action="/paste" method="POST">
-        <input name="poster" type="text" />
-        <select name="class">
-          %s
-        </select>
-        <br />
-        <textarea cols="110" rows="20" name="code"></textarea />
-        <input type="submit" />
-        </form>
-        """ % get_option_tag()
-        self.write(html)
-
-
-    def post(self):
-        poster = self.get_argument('poster', 'Anonymous')
-        typ = self.get_argument('class', 'text')
-        code = self.get_argument('code')
-
-        lid = insert_code(poster, code, typ)
-
-        self.redirect('/show/%d'%lid)
-
-
-class ShowHandler(BaseHandler):
-    _url = r'/show/(?P<rid>\d+)'
-    def get(self, rid):
-        html = ''
-        text = self.get_argument('text', None)
-        if rid:
-            r = get_code(rid, text)
-            html += """<html><head>
-            <title>Pythoner Club Paste</title>
-            <style type="text/css">%s</style></head><body><div class="hll">""" % r.get('css')
-            html += r.get('code')
-            html += "</div></body></html>"
-            self.set_header("Content-Type", "text/html")
-            if text:
-                html = r.get('code')
-                self.set_header("Content-Type", "text/plain")
-            self.write(html)
-
-
