@@ -4,7 +4,7 @@
 #   Author  :   cold
 #   E-mail  :   wh_linux@126.com
 #   Date    :   12/12/31 16:58:49
-#   Desc    :   类别操作
+#   Desc    :   分类操作
 #
 from core.logic import Logic
 

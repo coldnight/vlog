@@ -14,7 +14,7 @@ from .db import MySQLContext as MC
 class Logic(object):
     """ 逻辑基类 """
     _t = None
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         if self._t:
             self._table = self._t
         else:
@@ -22,7 +22,7 @@ class Logic(object):
         self._mc = partial(MC, self._table)
         self.logger = get_logger()
         self.logger.debug("%s init instance", self._table)
-        self.init()
+        self.init(*args, **kwargs)
 
     def init(self):
         pass

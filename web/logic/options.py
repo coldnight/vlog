@@ -12,9 +12,8 @@ class Options(Logic):
     """ 提供一个Key-Value的选项
         `owner` --- 区分选项拥有者的标志 default: global
     """
-    def __init__(self, owner="global"):
+    def init(self, owner="global"):
         self._owner = owner
-        super(Options, self).__init__()
 
     def get_option(self, key):
         owner = self._owner
