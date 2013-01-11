@@ -11,8 +11,9 @@ from .category import CategoryLogic
 from .post import PostLogic
 from .comment import CommentLogic
 from .page import PageLogic
-from .options import GlobalOption
+from .options import GlobalOption, Options
 from .user import UserLogic
+from .upload import UploadLogic
 
 class Logic(object):
     """ 使用类属性实例化各个逻辑类 """
@@ -23,4 +24,5 @@ class Logic(object):
     page = PageLogic()
     comment = CommentLogic()
     option = GlobalOption()
-
+    upload = UploadLogic()
+    Options = Options

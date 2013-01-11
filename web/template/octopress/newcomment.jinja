@@ -94,7 +94,7 @@ $('#submit').click(function(){
                   }
                   $.cookie('usercomnum', cnum, { expires: 1, path: '/' });
                   $('#submit').removeAttr("disabled");
-                  window.location = '{{ request.path }}#comments';
+                  window.location.href = '{{ request.path }}#comments';
               }else{
                   $('#text').html(data.msg);
               }

@@ -103,7 +103,19 @@ class CategoryLogic(Logic):
         return cate
 
     def add_post_categories(self, pid, cids):
-        self.ptc.add_post_categories(pid, cids)
+        dst_cids = []
+        for cid in cids:
+            if isinstance(cid, (int, long)):
+                dst_cids.append(cid)
+            elif isinstance(cid, (str, unicode)) and cid.isdigit():
+                dst_cids.append(cid)
+            else:
+                cate = self.check_exists(cid)
+                if cate:
+                    dst_cids.append(cate.get("id"))
+                else:
+                    dst_cids.append(self.add_category(cid).get("data").get("id"))
+        self.ptc.add_post_categories(pid, dst_cids)
 
     def get_post_category(self, pid):
         cids = self.ptc.get_category_ids(pid)

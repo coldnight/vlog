@@ -15,7 +15,7 @@
         class="count">{{obj.comment_num}}</a></small>
        </p>
    </header>
-   <div class="entry-content">{{ obj.short_content }}</div>
+   <div class="entry-content">{{ obj.short_content|escape }}</div>
     <small style="color:#999">Tags:
         {% for tag in obj.tags %}
         {{ tag.name }} &nbsp;
@@ -33,11 +33,11 @@
    <nav role="pagination">
        <div>
        {% if pageinfo.pageindex > 1 %}
-        <a class="prev" href="/1">&larr; Prev</a>
+        <a class="prev" href="/{{ pageinfo.prevpage }}">&larr; Prev</a>
         {% endif %}
          &nbsp;
          {% if pageinfo.pageindex < pageinfo.totalpage %}
-        <a class="next" href="#">Older &rarr;</a>
+        <a class="next" href="{{ pageinfo.nextpage }}">Next &rarr;</a>
         {% endif %}
        </div>
    </nav>

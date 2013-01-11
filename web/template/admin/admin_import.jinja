@@ -1,0 +1,53 @@
+{% extends "base.jinja" %}
+{% block head %}
+<script type="text/javascript">
+var defaultContent = ''
+</script>
+{% endblock %}
+{%block content %}
+<span id="h"></span>
+<h2>从WordPress导入</h2>
+<form id="up_form" enctype="multipart/form-data">
+<p style="float:left; width:800px;">
+    插入图片
+    <input type="file" id="wpexport" name="wpexport" value="浏览" />
+    <input type="button" name="upload" id="upload" class="btn" value="开始" />
+</p>
+</form>
+<script type="text/javascript" src="/static/js/jquery.form.js"></script>
+<script type="text/javascript">
+function checkXMLType(filename) {  
+  var pos = filename.lastIndexOf(".");  
+  var str = filename.substring(pos, filename.length)  
+  var str1 = str.toLowerCase();  
+  if (!/\.xml$/.test(str1)) {  
+      return false;  
+  }  
+  return true;  
+}   
+
+// 上传WordPress导出的xml文件
+$("#upload").click(function(){
+    var file = $("#wpexport").val()
+    if (checkXMLType(file)) {
+        var opts = {
+           url:'/admin/import',
+           method:'POST',
+           dataType:"json",
+           success:function(result, data){
+               if (result.status){
+                    alert("成功");
+                   $("#wpexport").clearInputs();
+               }else{
+                   alert('失败');
+               }
+           }
+       };
+       $("#up_form").ajaxSubmit(opts);
+    } else {
+        alert("上传文件不是XML文件");
+    }
+});
+
+</script>
+{% endblock %}

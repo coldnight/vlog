@@ -15,13 +15,15 @@ MYSQL_DB_USER = 'root'
 MYSQL_PRE = ''
 MYSQL_DB_PWD = ''
 
-DEBUG = True
+DEBUG = False
 
 ROOT_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 
 STATIC_PATH = os.path.join(ROOT_PATH, 'web/static')
 
 TEMPLATE_PATH = os.path.join(ROOT_PATH, 'web/template')
+
+UPLOAD_PATH = os.path.join(STATIC_PATH, 'upload')
 
 sys.path.insert(0, ROOT_PATH)
 

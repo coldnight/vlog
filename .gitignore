@@ -9,4 +9,5 @@
 tags
 .#*
 *.db
-./settings.py
+web/static/upload
+web/static/*.xml

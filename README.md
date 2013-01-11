@@ -18,3 +18,18 @@ vLog 是一个轻量级的日志/博客系统,使用Markdown格式书写博文,�
 
 #结合nginx
 参阅[tornado文档](http://www.tornadoweb.cn/documentation#_14)
+
+
+#从Wordpress中导入
+## 从Wordpress导出
+在wordpress管理后台选择工具->导出,下载导出文件可以导出一份xml
+
+## 导入到vLog
+进入vLog后台,选择导入,浏览选中导出的xml, 然后选择开始,等待提示成功后即导入成功
+
+## 移动媒体文件
+将/path/to/your/wordpress/wp-content/uploads/下的所有文件移动到 /path/to/your/vlog/web/static/upload 下即可
+
+## 手动更改没有生效的链接
+虽然我已经竭尽所能的让你手头的工作更少,但是还不够,还是存在许多需要手动更改的地方, 比如每篇文章的图片链接
+

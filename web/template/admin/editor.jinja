@@ -1,7 +1,17 @@
 
-<div id="epiceditor" style="width:800px;float:left;height:500px;margin-right:10px;"></div>
+<p>
+<div id="epiceditor"
+style="width:800px;float:left;height:500px;margin-right:10px;"></div></p>
 <!-- rich editer -->
+<form id="up_form" enctype="multipart/form-data">
+<p style="float:left; width:800px;">
+    插入图片
+    <input type="file" id="uploadfile" name="uploadfile" value="浏览" />
+    <input type="button" name="upload" id="upload" class="btn" value="上传" />
+</p>
+</form>
 <script type="text/javascript" src="/static/epiceditor/js/epiceditor.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery.form.js"></script>
 <script type="text/javascript">
 var opts = {
     container: 'epiceditor',
@@ -29,5 +39,38 @@ var opts = {
 }
 var editor = new EpicEditor(opts)
 editor.load()
+
+function checkImgType(filename) {  
+  var pos = filename.lastIndexOf(".");  
+  var str = filename.substring(pos, filename.length)  
+  var str1 = str.toLowerCase();  
+  if (!/\.(gif|jpg|jpeg|png|bmp)$/.test(str1)) {  
+      return false;  
+  }  
+  return true;  
+}   
+
+// 上传图片
+$("#upload").click(function(){
+    var file = $("#uploadfile").val()
+    if (checkImgType(file)) {
+        var opts = {
+           url:'/admin/upload',
+           method:'POST',
+           dataType:"json",
+           success:function(result, data){
+               if (result.status){
+                   editor.editor.innerHTML += "![Alt text]("+result.path+")";
+                   $("#uploadfile").clearInputs();
+               }else{
+                   alert('失败');
+               }
+           }
+       };
+       $("#up_form").ajaxSubmit(opts);
+    } else {
+        alert("上传文件不是图片");
+    }
+});
 </script>
 <!-- rich editer end -->

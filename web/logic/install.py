@@ -114,6 +114,7 @@ create table if not exists `{1}comment` (
     `content` VARCHAR(50) NOT NULL,
     `parent` INT NOT NULL default 0,
     `pid` INT NOT NULL default 0,
+    `ip` VARCHAR(128) NULL,
     allowed INT NOT NULL default 0,
     date TIMESTAMP NOT NULL,
     PRIMARY KEY(`id`),

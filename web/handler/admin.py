@@ -15,6 +15,7 @@ from core.util import md5
 from web.logic import Logic
 from web.logic.sitemap import handle_sitemap
 from web.logic.rss import handle_rss
+from web.logic.fwp import FromWPLogic
 
 
 class AdminHandler(BaseHandler):
@@ -207,3 +208,34 @@ class AddCategory(AdminHandler):
         r = Logic.category.add_category(name)
         self.handle_sitemap()
         self.write(r)
+
+class UploadHandler(AdminHandler):
+    def post(self):
+        if self.request.files:
+            request = self.request.files["uploadfile"][0]
+            filename = request["filename"]
+            body = request["body"]
+            url_path = Logic.upload.upload(body, filename)
+            result = {"status":True, "path":url_path}
+        else:
+            result = {"status":False}
+
+        self.write(result)
+
+class ImportHandler(AdminHandler):
+    def get(self):
+        self.render("admin_import.jinja")
+
+    def post(self):
+        if self.request.files:
+            request = self.request.files["wpexport"][0]
+            filename = request["filename"]
+            body = request["body"]
+            path = Logic.upload.upload(body, filename, True)
+            fromwp = FromWPLogic(Logic, path)
+            fromwp.start()
+            result = {"status":True}
+        else:
+            result = {"status":False}
+
+        self.write(result)

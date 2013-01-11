@@ -11,7 +11,7 @@ import os
 from MySQLdb import OperationalError
 from tornado.web import StaticFileHandler
 
-from config import STATIC_PATH as STATIC_ROOT
+from config import STATIC_PATH as STATIC_ROOT, UPLOAD_PATH
 from core.web import BaseHandler
 
 from web.logic import Logic
@@ -156,6 +156,7 @@ class PostHandler(WebHandler):
         comment_dict['email'] = email
         comment_dict['url'] = url
         comment_dict['content'] = content
+        comment_dict['ip'] = self.request.remote_ip
         cid = Logic.comment.add_comment(pid, comment_dict)
         if self.uid and self.username:
             Logic.comment.allow_comment(cid)
@@ -221,3 +222,11 @@ class SitemapHandler(StaticFileHandler):
 
     def get(self):
         StaticFileHandler.get(self, 'sitemap.xml')
+
+class UploadHandler(StaticFileHandler):
+    _url = r"/upload/(.+)"
+    def initialize(self):
+        StaticFileHandler.initialize(self, UPLOAD_PATH)
+
+    def get(self, filename):
+        StaticFileHandler.get(self, filename)
