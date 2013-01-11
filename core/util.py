@@ -72,8 +72,8 @@ def get_logger():
     fmt = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
     hdl.setFormatter(fmt)
     handler = hdl
-    logger.handlers = []
-    logger.addHandler(handler)
+    if not logger.handlers:
+        logger.addHandler(handler)
     logger.setLevel(level) # change to DEBUG for higher verbosity
     return logger
 
