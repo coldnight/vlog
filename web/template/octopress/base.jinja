@@ -64,7 +64,7 @@
         var dispatch = function() {
             q = document.getElementById("q");
             if (q.value != "") {
-                window.open('http://www.google.com/search?q=site:{{request.host}}/topic/%20' + q.value, "_blank");
+                window.open('http://www.google.com/search?q=site:{{request.host}}/%20' + q.value, "_blank");
                 return false;
             } else {
                 return false;
@@ -106,6 +106,8 @@
     Powered by Tornado MySQL
     Time: <span id="requesttime">{{ request.request_time()}}</span> ms -
     <a href="/admin/" rel="nofollow">Admin</a>
+    <script src="http://s96.cnzz.com/stat.php?id=3767683&web_id=3767683&show=pic" language="JavaScript"></script>
+
     </p>
     <a style="display: none; " rel="nofollow" href="#top" id="go-to-top">▲</a>
   </footer>
