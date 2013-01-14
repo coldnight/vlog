@@ -28,8 +28,8 @@
             {% for cate in post.category %}
             <category><![CDATA[{{ cate.name }}]]></category>
             {% endfor %}
-            {% for tag in post.ttags %}
-            <category><![CDATA[{{ tag}}]]></category>
+            {% for tag in post.tags %}
+            <category><![CDATA[{{ tag.name }}]]></category>
             {% endfor %}
             <guid isPermaLink="true">http://{{request.host}}/post/{{post.id}}</guid>
             <description><![CDATA[{{ post.short_content }}<a href="http://{{request.host}}/post/{{post.id}}">Continue reading <span class="meta-nav">&#8594;</span></a>]]></description>

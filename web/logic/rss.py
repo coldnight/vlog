@@ -28,10 +28,6 @@ def handle_rss(logic, request):
         env = Environment(loader = __loader)
         BaseHandler._path_to_evn[TEMPLATE_PATH] = env
     template = env.get_template(template_path)
-    for p in posts:
-        p['content'] = urllib.quote(p.get("content").encode("utf-8")).decode("utf-8")
-        p['title'] = urllib.quote(p.get("title").encode("Utf-8")).decode("utf-8")
-        p['short_content'] = urllib.quote(p.get("short_content").encode("utf-8")).decode("utf-8")
     content = template.render(posts = posts, request = request,
                               buildDate = now().strftime(timeformat),
                               SITE_TITLE = logic.option.site_title,
