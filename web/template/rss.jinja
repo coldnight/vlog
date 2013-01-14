@@ -11,7 +11,7 @@
 <channel>
     <title>{{ SITE_TITLE }}</title>
     <atom:link href="http://{{request.host}}/feed" rel="self" type="application/rss+xml" />
-    <link>http://{{request.host}}</link>
+    <link>http://{{ request.host }}</link>
     <description>{{ description}}</description>
     <lastBuildDate>{{ buildDate }}</lastBuildDate>
 	<language>zh-CN</language>
@@ -21,7 +21,7 @@
     {% for post in posts %}
 		<item>
             <title>{{ post.title }}</title>
-            <link>http://{{ request.post }}/post/{{post.id}}</link>
+            <link>http://{{ request.host }}/post/{{post.id}}</link>
             <comments>http://{{ request.post}}/post/{{post.id}}#comments</comments>
             <pubDate>{{ post.rss_date }}</pubDate>
             <dc:creator>{{ post.author.name }}</dc:creator>

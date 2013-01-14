@@ -4,6 +4,8 @@ import sys
 
 PORT = 18888
 
+DEBUG = False
+
 MONGO_DB_HOST = 'localhost:27017'
 MONGO_DB_NAME = 'pec'
 
@@ -24,8 +26,6 @@ CACHE_USER = ''
 CACHE_PWD = ''
 
 CACHE_TIMEOUT = 0   # 缓存过期时间,单位为秒, 0不过期
-
-DEBUG = True
 
 ROOT_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 
