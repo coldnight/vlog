@@ -54,8 +54,6 @@ class CommentLogic(Logic):
                 u"".format(request.host, request.uri, post_title)
         send_mail([admin_email], sub, content)
 
-
-
     def allow_comment(self, cid, pid = None, item = None, request = None):
         with self._mc() as op:
             where = "`id`='{0}'".format(op.escape(cid))
