@@ -196,6 +196,8 @@ class Secure(AdminHandler):
                     r = {"status":False, "errmsg":"请输入新密码"}
             else:
                 r = {"status":False, "errmsg":"旧密码错误"}
+        else:
+            r = {"status":True}
 
         if r.get("status"):
             Logic.user.update(self.uid, user_dict)
