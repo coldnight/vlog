@@ -138,15 +138,20 @@ class EditPost(AdminHandler):
         self.write(r)
 
 class RemoveHandler(AdminHandler):
-    _url = r"/admin/del/(\w+)/(\d+)"
+    _url = r"/admin/del/(\w+)/(\d+)/?"
     def get(self, item, _id):
         if item == 'post' or item == 'page':
             Logic.post.remove(_id)
+            redirect = "/admin/add"+item
+
+        if item == "comment":
+            Logic.comment.remove_comment(_id)
+            redirect = self.request.headers.get("Referer")
 
         self.handle_sitemap()
         self.handle_rss()
         self.cache.flush()
-        self.redirect("/admin/add"+item)
+        self.redirect(redirect)
 
 class SiteHandler(AdminHandler):
     def get(self):
