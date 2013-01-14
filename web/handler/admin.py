@@ -241,3 +241,8 @@ class ImportHandler(AdminHandler):
             result = {"status":False}
 
         self.write(result)
+
+class CleanHandler(AdminHandler):
+    def get(self):
+        self.cache.flush()
+        self.redirect("/admin/")

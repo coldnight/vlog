@@ -165,7 +165,7 @@ class PostHandler(WebHandler):
         cid = Logic.comment.add_comment(pid, comment_dict)
         if self.uid and self.username:
             Logic.comment.allow_comment(cid)
-        self.redirect("/post/{0}#comments".format(pid))
+        self.write({"status":True, "msg":u"评论提交成功,等待管理员审核"})
 
 class CategoryHandler(WebHandler):
     _url = r"/category/(\d+)/(\d*)"

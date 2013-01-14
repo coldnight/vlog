@@ -81,7 +81,7 @@ $('#submit').click(function(){
         data: {'name': author, 'email':email, 'url': url, 'content': con},
         success: function(data){
               if(data.status){
-                  $('#commentlist').append(data.msg);
+                  $('#h').append(data.msg);
                   scroll(0,$("#h").position().top);
                   $('#commentsec').fadeIn("slow");
                   $('#commentbox').val('');
@@ -94,7 +94,7 @@ $('#submit').click(function(){
                   }
                   $.cookie('usercomnum', cnum, { expires: 1, path: '/' });
                   $('#submit').removeAttr("disabled");
-                  window.location.href = '{{ request.path }}#comments';
+                  window.location='{{ request.path }}#comments';
               }else{
                   $('#text').html(data.msg);
               }
