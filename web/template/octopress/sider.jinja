@@ -18,7 +18,7 @@
     <ul id="new_posts">
     {% for n in new %}
         <li class="post">
-            <a href="/post/{{n}}" alt="{{ new[n] }}"> {{ new[n] }}</a>
+            <a href="/post/{{n.id}}" alt="{{ n.title }}"> {{ n.title }}</a>
         </li>
     {% endfor %}
     </ul>

@@ -93,17 +93,22 @@ class WebHandler(BaseHandler):
     #TODO 可配置的主题
     template_path = os.path.join(BaseHandler.template_path, 'octopress')
 
+    def initialize(self):
+        self.pagesize = self.cache.get("pagesize")
+        if not self.pagesize:
+            self.option = Logic.option
+            pagesize = self.option.pagesize
+            self.pagesize = pagesize if pagesize else 10
+            self.cache.set("pagesize", self.pagesize)
+
     def prepare(self):
-        super(BaseHandler, self).prepare()
+        super(WebHandler, self).prepare()
         try:
             admin = Logic.user.check_has_admin()
             if not admin:
                 self.redirect('/install/')
         except OperationalError:
             self.redirect('/install/')
-        self.option = Logic.option
-        pagesize = self.option.pagesize
-        self.pagesize = pagesize if pagesize else 10
 
 
 
@@ -113,7 +118,7 @@ class WebHandler(BaseHandler):
         pl = Logic.post
         kwargs['comments'] = Logic.comment.get_last_comments(pl)
         kwargs['tags'] = tags.get('data')
-        kwargs['new'] = pl.get_titles()
+        kwargs['new'] = pl.get_new()
         kwargs['months'] = pl.get_months()
         kwargs['categories'] = categories.get('data')
         kwargs['SITE_TITLE'] = self.option.site_title

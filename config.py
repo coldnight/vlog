@@ -15,7 +15,17 @@ MYSQL_DB_USER = 'root'
 MYSQL_PRE = ''
 MYSQL_DB_PWD = ''
 
-DEBUG = False
+CACHED = True
+
+CACHE_HOST = ["localhost:11211"]
+
+CACHE_USER = ''
+
+CACHE_PWD = ''
+
+CACHE_TIMEOUT = 0   # 缓存过期时间,单位为秒, 0不过期
+
+DEBUG = True
 
 ROOT_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 

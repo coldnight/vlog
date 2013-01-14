@@ -13,8 +13,9 @@ import threading
 from uuid import uuid1
 from tornado.web import RequestHandler
 from jinja2 import Environment, FileSystemLoader
-from config import TEMPLATE_PATH
+from config import TEMPLATE_PATH, CACHED
 from .util import get_logger
+from .cache import Memcached
 
 class Session(object):
     """
@@ -137,6 +138,7 @@ class BaseHandler(RequestHandler):
     username = property(lambda self: self.get_secure_cookie(self._USER_))
     uid = property(lambda self: self.get_secure_cookie(self._USER_ID_))
     logger = get_logger()
+    cache = Memcached
 
     def login(self, username, uid, redirect = None):
         self.set_secure_cookie(self._USER_, username, expires_days=None)
@@ -160,6 +162,12 @@ class BaseHandler(RequestHandler):
         t = env.get_template(template_path)
         kwargs['request'] = self.request
         content = t.render(**kwargs)
+        # 按照uri缓存
+        if self.request.method == "GET" and CACHED and \
+           not self.request.path.startswith("/admin"):
+
+            self.cache.set(self.request.uri, content)
+
         self.finish(content)
 
     @property
@@ -168,5 +176,16 @@ class BaseHandler(RequestHandler):
 
     def prepare(self):
         super(BaseHandler, self).prepare()
+        if self.request.method == "GET" and CACHED and \
+           not self.request.path.startswith("/admin"):
+
+            cache = self.cache.get(self.request.uri)
+            if cache:
+                return self.finish(cache)
+
+    def on_finish(self):
+        """ 请求结束时调用 """
+        if self.request.method == "POST":
+            self.cache.flush()
 
 __all__ = ['BaseHandler']

@@ -145,6 +145,7 @@ class RemoveHandler(AdminHandler):
 
         self.handle_sitemap()
         self.handle_rss()
+        self.cache.flush()
         self.redirect("/admin/add"+item)
 
 class SiteHandler(AdminHandler):
@@ -199,6 +200,7 @@ class CommentHandler(AdminHandler):
     _url = r"/admin/allow/comment/(\d+)/(\d+)/(\w+)"
     def get(self, pid, cid, item):
         Logic.comment.allow_comment(cid)
+        self.cache.delete("/post/"+pid)
         self.redirect("/{0}/{1}#comments".format(item, pid))
 
 

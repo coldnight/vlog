@@ -73,6 +73,12 @@ class PostLogic(Logic):
         [result.update({p.get('id'):p.get('title')}) for p in posts]
         return result
 
+    def get_new(self):
+        posts = self.get_titles()
+        posts = [{'id':key, 'title':value} for key, value in posts.items()]
+        posts = sorted(posts, key = lambda x:x['id'], reverse = True)
+        return posts
+
     def get_months(self):
         """ 获取所有文章归档年月 """
         with self._mc() as op:
