@@ -8,7 +8,7 @@
 #
 
 from core.logic import Logic
-from core.util import md5
+from core.util import encrypt_md5
 
 class UserLogic(Logic):
     def add_admin(self, user_dict):
@@ -25,7 +25,7 @@ class UserLogic(Logic):
         if user_dict["password"] != user_dict["password2"]:
             return self.error("两次输入密码不一致")
         pwd = user_dict.pop("password2")
-        user_dict['password'] = md5(pwd)
+        user_dict['password'] = encrypt_md5(pwd)
         user_dict['name'] = user_dict.get("username")
         with self._mc() as op:
             fields, values = self.handle_insert(user_dict)
@@ -43,7 +43,7 @@ class UserLogic(Logic):
         if not (username and password):
             return self.error("请使用用户名密码登录")
         if username == admin.get('username') and \
-           md5(password) == admin.get('password'):
+           encrypt_md5(password) == admin.get('password'):
             return self.success(admin)
         else:
             return self.error("登录失败")
@@ -74,7 +74,7 @@ class UserLogic(Logic):
     def add_new_user(self, name, pw):
         if name and pw:
             fields = ['name', 'password']
-            values = [name, md5(pw)]
+            values = [name, encrypt_md5(pw)]
             with self._mc() as op:
                 return op.insert(fields, values)
 

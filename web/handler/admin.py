@@ -10,7 +10,7 @@ import os
 import functools
 
 from core.web import BaseHandler
-from core.util import md5
+from core.util import encrypt_md5
 
 from web.logic import Logic
 from web.logic.sitemap import handle_sitemap
@@ -185,10 +185,10 @@ class Secure(AdminHandler):
         user_dict = {"name":name}
         if oldp:
             user = Logic.user.get_user_by_id(self.uid)
-            if md5(oldp) == user.get("password"):
+            if encrypt_md5(oldp) == user.get("password"):
                 if pwd and pwd2:
                     if pwd == pwd2:
-                        user_dict.update(password = md5(pwd))
+                        user_dict.update(password = encrypt_md5(pwd))
                         r = {"status":True}
                     else:
                         r = {"status": False, "errmsg":"两次密码不一致"}

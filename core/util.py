@@ -15,7 +15,8 @@ from datetime import datetime
 
 from config import DEBUG, LOG_PATH
 
-md5 = lambda s: hashlib.md5(s + '3d2535f2ecf1dd3b7b').hexdigest()
+encrypt_md5 = lambda s: hashlib.md5(s + '3d2535f2ecf1dd3b7b').hexdigest()
+md5 = lambda s: hashlib.md5(s).hexdigest()
 
 NOW = lambda: datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 now = lambda: datetime.now()
@@ -28,7 +29,7 @@ def utf8sub(content, start = 0, end = 50):
     return content
 
 def make_active_code(loginname, email):
-    return base64.b64encode(md5(loginname + email + time.time()))
+    return base64.b64encode(encrypt_md5(loginname + email + time.time()))
 
 def send_active_email(email, activecode):
     pass
