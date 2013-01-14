@@ -92,11 +92,11 @@ class WebHandler(BaseHandler):
     """ web前台handler基类 """
     #TODO 可配置的主题
     template_path = os.path.join(BaseHandler.template_path, 'octopress')
+    option = Logic.option
 
     def initialize(self):
         self.pagesize = self.cache.get("pagesize")
         if not self.pagesize:
-            self.option = Logic.option
             pagesize = self.option.pagesize
             self.pagesize = pagesize if pagesize else 10
             self.cache.set("pagesize", self.pagesize)
