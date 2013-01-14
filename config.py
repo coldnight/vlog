@@ -4,18 +4,7 @@ import sys
 
 PORT = 18888
 
-DEBUG = False
-
-MONGO_DB_HOST = 'localhost:27017'
-MONGO_DB_NAME = 'pec'
-
-MYSQL_DB_HOST = 'localhost'
-MYSQL_DB_PORT = 3306
-MYSQL_DB_NAME = 'pec'
-MYSQL_DB_USER = 'root'
-#MYSQL_PRE = 'vlog_'
-MYSQL_PRE = ''
-MYSQL_DB_PWD = ''
+DEBUG = True
 
 CACHED = True
 

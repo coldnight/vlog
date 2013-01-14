@@ -4,7 +4,7 @@
 #
 import os
 import sys
-from config import PORT, MONGO_DB_HOST, MONGO_DB_NAME
+from config import PORT
 from core.app import load_apps, settings
 from core.utest import run_utest as utest_func
 from core.util import get_logger
@@ -38,8 +38,8 @@ if __name__ == '__main__':
                         help = 'Port to listen to')
     parser.add_argument('-c', '--clear', action='store_true', dest='clear',
                         default= False, help = "Clear tmp file")
-    parser.add_argument('-m', '--mongo', action='store_true', dest='mongo',
-                        default = False, help = "Open the mongo shell")
+    #parser.add_argument('-m', '--mongo', action='store_true', dest='mongo',
+    #                    default = False, help = "Open the mongo shell")
     parser.add_argument('-d', '--debug', action='store_true', dest='debug',
                         default = False, help = 'Run pec with debug mode')
 
@@ -50,12 +50,12 @@ if __name__ == '__main__':
         print 'Clear tmp files...'
         os.system(cmd)
         sys.exit(0)
-
+    """
     if args.mongo:
         cmd = "mongo {0}/{1}".format(MONGO_DB_HOST, MONGO_DB_NAME)
         os.system(cmd)
         sys.exit(0)
-
+    """
     if args.utest is None or args.utest:
         utest_func(args.utest)
     else:

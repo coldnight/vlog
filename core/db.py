@@ -7,7 +7,6 @@
 #   Desc    :   数据库操作
 #
 from .mysql import MySQLContext
-from .mongo import MongoContext
 
 
-__all__ = ['MySQLContext', 'MongoContext']
+__all__ = ['MySQLContext']
