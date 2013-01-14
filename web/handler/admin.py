@@ -205,7 +205,7 @@ class CommentHandler(AdminHandler):
     _url = r"/admin/allow/comment/(\d+)/(\d+)/(\w+)"
     def get(self, pid, cid, item):
         Logic.comment.allow_comment(cid)
-        self.cache.delete("/post/"+pid)
+        self.cache.flush()
         self.redirect("/{0}/{1}#comments".format(item, pid))
 
 

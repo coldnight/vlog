@@ -71,9 +71,10 @@ class CommentLogic(Logic):
 
     def get_last_comments(self, postlogic, size = 5):
         with self._mc() as op:
+            where ="`allowed`='1'"
             order = {"id":-1}
             limit = self.handle_limit(size = size)
-            r = op.select(order = order, limit = limit)
+            r = op.select(where = where, order = order, limit = limit)
         pids = [c.get('pid') for c in r]
         titles = postlogic.get_titles(pids)
         comments = self._insert_post_title(r, titles)

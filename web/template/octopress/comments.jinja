@@ -12,17 +12,19 @@
         </div>
         <div class="fr">
         <a href="#respond" onclick="reply('{{cobj.id}}','{{cobj.name}}')">Reply</a>
-        {% if uid and username and not cobj.allowed %}
-        {% if ispage %}
-        <a href="/admin/allow/comment/{{post.id}}/{{cobj.id}}/page">Allow</a>
-        {% else %}
-        <a href="/admin/allow/comment/{{post.id}}/{{cobj.id}}/post">Allow</a>
-        {% endif %}
-        <a href="/admin/del/comment/{{cobj.id}}">Del</a>
+        {% if uid and username %}
+            {% if not cobj.allowed %}
+                {% if ispage %}
+                    <a href="/admin/allow/comment/{{post.id}}/{{cobj.id}}/page">Allow</a>
+                {% else %}
+                    <a href="/admin/allow/comment/{{post.id}}/{{cobj.id}}/post">Allow</a>
+                {% endif %}
+            {% endif %}
+            <a href="/admin/del/comment/{{cobj.id}}">Del</a>
         {% endif %}</div>
         <div class="c"></div>
         </div> 
-{% if cobj.allowed %}
+{% if cobj.allowed or (username and uid) %}
         <p>{{cobj.content}}</p>
         {% else %}
         <em>Your comment is awaiting moderation.</em>
