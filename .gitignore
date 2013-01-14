@@ -11,3 +11,4 @@ tags
 *.db
 web/static/upload
 web/static/*.xml
+.zcache
