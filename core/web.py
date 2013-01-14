@@ -164,7 +164,8 @@ class BaseHandler(RequestHandler):
         content = t.render(**kwargs)
         # 按照uri缓存
         if self.request.method == "GET" and CACHED and \
-           not self.request.path.startswith("/admin"):
+           not self.request.path.startswith("/admin") \
+           and not (self.username and self.uid):
 
             self.cache.set(self.request.uri, content)
 
@@ -177,7 +178,8 @@ class BaseHandler(RequestHandler):
     def prepare(self):
         super(BaseHandler, self).prepare()
         if self.request.method == "GET" and CACHED and \
-           not self.request.path.startswith("/admin"):
+           not self.request.path.startswith("/admin") \
+           and not (self.username and self.uid):
 
             cache = self.cache.get(self.request.uri)
             if cache:
