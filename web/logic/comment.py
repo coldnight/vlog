@@ -7,11 +7,25 @@
 #   Desc    :   评论逻辑
 #
 from core.logic import Logic
-from core.util import md5, utf8sub
+from core.util import md5, utf8sub, send_mail
 
-#TODO 邮件通知
+from .options import GlobalOption
+from .user import UserLogic
+
 class CommentLogic(Logic):
-    def add_comment(self, pid, comment_dict):
+    go = GlobalOption()
+    ul = UserLogic()
+
+    def init(self, pl):
+        self.pl = pl
+
+    def get_comment_by_id(self, _id):
+        """ """
+        with self._mc() as op:
+            where = "`id`='{0}'".format(op.escape(_id))
+            return op.select_one(where = where)
+
+    def add_comment(self, pid, comment_dict, request):
         fields = []
         values = []
         comment_dict['pid'] = pid
@@ -20,13 +34,44 @@ class CommentLogic(Logic):
             values.append(comment_dict[k])
 
         with self._mc() as op:
-            return op.insert(fields, values)
+            op.insert(fields, values)
 
-    def allow_comment(self, cid):
+        post_title = self.pl.get_post_by_id(pid).get("data", {}).get("title")
+        if comment_dict.has_key("parent"):
+            parent = comment_dict.get("parent")
+            par_comm = self.get_comment_by_id(parent)
+            email = par_comm.get("email")
+            content = u"有人在<a href='http://{0}'>{1}</a>上的" \
+                    u"<a href='http://{0}{2}'>{3}</a>文章回复" \
+                    u"了你的评论,点击<a href='http://{0}{2}#comments'>链接</a>"\
+                    u"查看".format(request.host, self.go.site_title, request.uri,
+                                   post_title)
+            send_mail([email], self.go.site_title + u" >> 收到新的回复", content)
+
+        admin_email = self.ul.check_has_admin().get("email")
+        sub = self.go.site_title + u" >> 有新的评论,请审核"
+        content = u"文章<a href='http://{0}{1}'>{2}</a> 有新的评论"\
+                u"".format(request.host, request.uri, post_title)
+        send_mail([admin_email], sub, content)
+
+
+
+    def allow_comment(self, cid, pid = None, item = None, request = None):
         with self._mc() as op:
             where = "`id`='{0}'".format(op.escape(cid))
             set_dict = {"allowed":1}
-            op.update(set_dict, where)
+            r = op.update(set_dict, where)
+            if not pid:
+                return r
+        comm = self.get_comment_by_id(cid)
+        email = comm.get("email")
+        post_title = self.pl.get_post_by_id(pid).get("data", {}).get("title")
+        sub = self.go.site_title + u" >> 评论通过审核"
+        content = u"您对<a href='http://{0}'>{4}</a> 上的 "\
+                u"<a href='http://{0}/{1}/{2}'>{3}</a> 文章的评论通过了审核,"\
+                u"点击<a href='http://{0}/{1}/{2}#comments'>链接</a>"\
+                u"查看".format(request.host, item, pid, post_title, self.go.site_title)
+        send_mail([email], sub, content)
 
     def count_post_comments(self, pid):
         with self._mc() as op:

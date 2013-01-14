@@ -46,6 +46,7 @@ $('#submit').click(function(){
     var url = $('#url').val();
     var con = $('#commentbox').val();
     var author = $('#author').val();
+    var par= $("#toid").val();
     
     if(author.length< 1 || author.length > 30){
         $('#author').focus();
@@ -73,12 +74,15 @@ $('#submit').click(function(){
     $.cookie('author', author, { expires: 365, path: '/' });
     $.cookie('email', email, { expires: 365, path: '/' });
     $.cookie('url', url, { expires: 365, path: '/' });
-    
+    var data = {'name': author, 'email':email, 'url': url, 'content': con};
+    if (par){
+        data['parent'] = par
+    }
     $.ajax({
         type: 'POST',
         url: '/post/{{post.id}}',
         dataType: "json",
-        data: {'name': author, 'email':email, 'url': url, 'content': con},
+        data: data,
         success: function(data){
               if(data.status){
                   $('#h').append(data.msg);

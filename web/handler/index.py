@@ -156,13 +156,15 @@ class PostHandler(WebHandler):
         email = self.get_argument("email")
         url = self.get_argument("url")
         content = self.get_argument("content")
+        parent = self.get_argument("parent", None)
         comment_dict = {}
         comment_dict['name'] = name
         comment_dict['email'] = email
         comment_dict['url'] = url
         comment_dict['content'] = content
         comment_dict['ip'] = self.request.remote_ip
-        cid = Logic.comment.add_comment(pid, comment_dict)
+        if parent: comment_dict['parent'] = parent
+        cid = Logic.comment.add_comment(pid, comment_dict, self.request)
         if self.uid and self.username:
             Logic.comment.allow_comment(cid)
         self.write({"status":True, "msg":u"评论提交成功,等待管理员审核"})

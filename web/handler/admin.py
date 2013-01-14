@@ -206,7 +206,7 @@ class Secure(AdminHandler):
 class CommentHandler(AdminHandler):
     _url = r"/admin/allow/comment/(\d+)/(\d+)/(\w+)"
     def get(self, pid, cid, item):
-        Logic.comment.allow_comment(cid)
+        Logic.comment.allow_comment(cid, pid, item, self.request)
         self.cache.flush()
         self.redirect("/{0}/{1}#comments".format(item, pid))
 

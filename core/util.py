@@ -10,10 +10,14 @@ import urllib
 import urllib2
 import logging
 import hashlib
+import threading
+
+import smtplib
+from email.mime.text import MIMEText
 
 from datetime import datetime
 
-from config import DEBUG, LOG_PATH
+from config import DEBUG, LOG_PATH, EMAIL_ACCOUNT, EMAIL_PASSWORD
 
 encrypt_md5 = lambda s: hashlib.md5(s + '3d2535f2ecf1dd3b7b').hexdigest()
 md5 = lambda s: hashlib.md5(s).hexdigest()
@@ -120,4 +124,26 @@ class HttpHelper(object):
         except:
             return content
 
+def _send_mail(to_list, sub, content):
+    user, server = EMAIL_ACCOUNT.split("@")
+    content += u"<br /> (这是一封由系统生成的邮件,请勿回复)"
+    msg = MIMEText(content, 'html', 'utf-8')
+    msg['Subject'] = sub
+    msg['From'] = "<"+EMAIL_ACCOUNT+">"
+    msg['To'] = ";".join(to_list)
+    try:
+        s = smtplib.SMTP_SSL("smtp." + server)
+        s.login(user, EMAIL_PASSWORD)
+    except Exception as e:
+        print str(e)
+        return False
+    s.sendmail(EMAIL_ACCOUNT, to_list, msg.as_string())
+    s.close()
+    logger = get_logger()
+    logger.debug(msg.as_string())
+    return True
 
+def send_mail(to_list, sub, content):
+    target = _send_mail
+    t = threading.Thread(target = target, args = (to_list, sub, content))
+    t.start()

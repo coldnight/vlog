@@ -34,3 +34,6 @@ CODERUN = "http://1.pyec.sinaapp.com/"
 
 LOG_PATH = os.path.join(ROOT_PATH, 'logs/default.log')
 
+EMAIL_ACCOUNT = "blog.linuxzen@gmail.com"
+
+EMAIL_PASSWORD = ""

@@ -19,7 +19,7 @@ class PostLogic(Logic):
         self.tl = TagLogic()
         self.cl = CategoryLogic()
         self.ul = UserLogic()
-        self.comment = CommentLogic()
+        self.comment = CommentLogic(self)
 
     def get_new_id(self):
         with self._mc() as op:

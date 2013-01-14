@@ -22,7 +22,7 @@ class Logic(object):
     category = CategoryLogic()
     post = PostLogic()
     page = PageLogic()
-    comment = CommentLogic()
+    comment = CommentLogic(post)
     option = GlobalOption()
     upload = UploadLogic()
     Options = Options
