@@ -38,10 +38,10 @@ class PostLogic(Logic):
             limit = self.handle_limit(index, size)
             where = "`enabled`='1' and `type`='1'"
             r = op.select(where = where, order = order, limit = limit)
-        posts = self.insert_info(r)
+        if r:  r= self.insert_info(r)
         total = self.count_posts().get('data')
         page_info = self.handle_page(total, index, size)
-        return self.success(posts, page_info)
+        return self.success(r, page_info)
 
     def get_all_posts(self):
         with self._mc() as op:
@@ -54,8 +54,9 @@ class PostLogic(Logic):
                     " and `type`='1'".format(op.escape(_id))
             r = op.select_one(where = where)
 
-        post = self.insert_info(r)
-        return self.success(post)
+        if r:
+            r = self.insert_info(r)
+        return self.success(r)
 
     def get_titles(self, ids = None, size = 5):
         """ 根据id获取文章标题或者后去最新10篇文章的标题 """
@@ -106,7 +107,8 @@ class PostLogic(Logic):
             posts = op.select(where = where, order = order, limit = limit)
             total = op.count(where = where)
         pageinfo = self.handle_page(total, index, size)
-        posts = self.insert_info(posts)
+        if posts:
+            posts = self.insert_info(posts)
         return self.success(posts, pageinfo)
 
     def get_post_by_ids(self, ids, index = 1, size = 10):
@@ -116,9 +118,10 @@ class PostLogic(Logic):
             where = "`id` in ('{0}') and `enabled`='1' "\
                     "and `type`='1'".format(wids)
             order = {"id":-1}
-            r = op.select(where = where, order = order, limit = limit)
+            posts = op.select(where = where, order = order, limit = limit)
         total = self.count_posts(where).get("data")
-        posts = self.insert_info(r)
+        if posts:
+            posts = self.insert_info(posts)
         page_info = self.handle_page(total, index, size)
         return self.success(posts, page_info)
 
