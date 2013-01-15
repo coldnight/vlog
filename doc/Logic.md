@@ -45,6 +45,7 @@ class DemoLogic(Logic):
 
 ### 返回
 dict
+```
 {
     totalpage: // 总页面
     pageindex: // 当前页面索引
@@ -52,6 +53,7 @@ dict
     nextpage : // 后一页索引
     pagesize : // 每页显示条数
 }
+```
 
 ## handle_limit
 生成MySQLlimit信息
@@ -71,11 +73,13 @@ tuple (skip, limit)
 
 ### 返回
 dict
+```
 {
     status : True  // 表示成功
     data : data    // 返回数据
     pageinfo : pageinfo // 分页信息(如果参数传的话)
 }
+```
 
 ## error
 
@@ -84,7 +88,9 @@ dict
 
 ### 返回
 dict
+```
 {
     status : False // 表示失败
     errmsg : ''    // 错误信息
 }
+```

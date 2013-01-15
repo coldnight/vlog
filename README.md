@@ -12,7 +12,7 @@ vLog 是一个轻量级的日志/博客系统,使用Markdown格式书写博文,�
 |- web           // 主要代码
 |   |- static    // 静态文件目录
 |   |- template  // 模板目录
-|   |- handle    // 业务请求
+|   |- handler   // 业务请求
 |   |- logic     // 业务逻辑
 |- run.py        // 启动脚本
 |- config.py     // 配置文件

@@ -23,12 +23,15 @@
 * username        当前用户用户名, 没则为None
 
 ### page
+```
 [{
     id
     title
 }, ...]
+```
 
 ### comments
+```
 [{
     date
     pid           // 对应的文章id
@@ -36,38 +39,49 @@
     content
     short_content
 }...]
+```
 
 ### new
+```
 [{
     id
     title
 },...]
+```
 
 ### categories
+```
 [{
     id
     name
     post_num
 }, ...]
+```
 
 ### tags
+```
 [{
     id
     name
     post_num
 }, ...]
+```
 
 ### months
+```
 [{
     year
     month
 }, ...]
+```
 
 ### links
+```
 [{
     url
     text
 }, ...]
+```
 
 
 ## 索引页面变量
@@ -75,6 +89,7 @@
 * pageinfo        分页信息
 
 ### posts
+```
 [{
     id
     title
@@ -88,8 +103,10 @@
     tag : [{ name, id }, ...],
     comment_num
 },...]
+```
 
 ### pageinfo
+```
 {
     totalpage: // 总页面
     pageindex: // 当前页面索引
@@ -97,6 +114,7 @@
     nextpage : // 后一页索引
     pagesize : // 每页显示条数
 }
+```
 
 ## 详情页变量
 * post            文章
@@ -105,6 +123,7 @@
 * ispage          是否是页面, 否则为文章
 
 ### post
+```
 {
     id
     title
@@ -118,14 +137,17 @@
     tag : [{ name, id }, ...],
     comment_num
 }
+```
 
 ### post_comments
+```
 [{
     gravatar          // 经过md5加密的email
     name              // 评论人
     url               // 评论url
     allowed           // 是否通过
 }, ...]
+```
 
 # 主要接口
 ## 添加评论
@@ -136,11 +158,13 @@
 POST
 
 ### 参数
+```
 name
 email
 url
 content
 parent
+```
 
 ## 编辑文章
 ### url
