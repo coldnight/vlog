@@ -125,6 +125,7 @@ class HttpHelper(object):
             return content
 
 def _send_mail(to_list, sub, content):
+    logger = get_logger()
     user, server = EMAIL_ACCOUNT.split("@")
     content += u"<br /> (这是一封由系统生成的邮件,请勿回复)"
     msg = MIMEText(content, 'html', 'utf-8')
@@ -135,12 +136,12 @@ def _send_mail(to_list, sub, content):
         s = smtplib.SMTP_SSL("smtp." + server)
         s.login(user, EMAIL_PASSWORD)
     except Exception as e:
-        print str(e)
+        logger.info(str(e))
         return False
     s.sendmail(EMAIL_ACCOUNT, to_list, msg.as_string())
     s.close()
-    logger = get_logger()
     logger.debug(msg.as_string())
+    logger.info("Send email to %r", to_list)
     return True
 
 def send_mail(to_list, sub, content):
