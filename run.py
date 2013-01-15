@@ -8,6 +8,7 @@ from config import PORT
 from core.app import load_apps, settings
 from core.utest import run_utest as utest_func
 from core.util import get_logger
+from web.handler.index import ErrorHandler
 
 from tornado.web import Application
 from tornado.ioloop import IOLoop
@@ -19,6 +20,7 @@ def main(port = None):
     info += 'Running On Port: %s\n' % port
     apps = load_apps()
     app_list = list(apps.items())
+    app_list.append((r"(/.*)", ErrorHandler))
     for a in app_list:
         info += '\t%-20s %s\n' % (a[0] , a[1])
     logger.info(info)

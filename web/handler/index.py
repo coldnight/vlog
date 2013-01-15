@@ -11,7 +11,7 @@ import os
 from MySQLdb import OperationalError
 from tornado.web import StaticFileHandler
 
-from config import STATIC_PATH as STATIC_ROOT, UPLOAD_PATH, THEME
+from config import STATIC_PATH as STATIC_ROOT, UPLOAD_PATH, THEME, DEBUG
 from core.web import BaseHandler
 
 from web.logic import Logic
@@ -101,6 +101,14 @@ class WebHandler(BaseHandler):
             self.pagesize = pagesize if pagesize else 10
             self.cache.set("pagesize", self.pagesize)
 
+    def get_error_html(self, status_code = 500, **kwargs):
+        errpath = os.path.join(self.template_path,
+                               "{0}.jinja".format(status_code))
+        if os.path.exists(errpath):
+            if not DEBUG and kwargs.has_Key("exception"):
+                kwargs["exception"] = None
+            self.render("{0}.jinja".format(status_code), **kwargs)
+
     def prepare(self):
         super(WebHandler, self).prepare()
         try:
@@ -109,8 +117,6 @@ class WebHandler(BaseHandler):
                 self.redirect('/install/')
         except OperationalError:
             self.redirect('/install/')
-
-
 
     def render(self, template_path, **kwargs):
         tags = Logic.tag.get_tags()
@@ -237,3 +243,7 @@ class UploadHandler(StaticFileHandler):
 
     def get(self, filename):
         StaticFileHandler.get(self, filename)
+
+class ErrorHandler(WebHandler):
+    def get(self, path):
+        self.send_error(404, info=u"您当前访问的页面不存在(可能由于博客迁移,您访问的还是旧链接)")

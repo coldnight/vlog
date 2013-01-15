@@ -169,7 +169,7 @@ class BaseHandler(RequestHandler):
 
             self.cache.set(self.request.uri, content)
 
-        self.finish(content)
+        self.write(content)
 
     @property
     def session(self):

@@ -1,0 +1,12 @@
+{% extends "base.jinja" %}
+{% block content %}
+<div>
+    <article class="hentry" role="article">
+    {% if exception %}
+    {{ exception }}
+    {% else %}
+    当前页面发生了错误,请联系管理员
+    {% endif %}
+</atricle>
+</div>
+{% endblock %}
