@@ -105,7 +105,7 @@ class WebHandler(BaseHandler):
         errpath = os.path.join(self.template_path,
                                "{0}.jinja".format(status_code))
         if os.path.exists(errpath):
-            if not DEBUG and kwargs.has_Key("exception"):
+            if not DEBUG and kwargs.has_key("exception"):
                 kwargs["exception"] = None
             self.render("{0}.jinja".format(status_code), **kwargs)
 
