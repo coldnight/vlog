@@ -172,6 +172,8 @@ class PostLogic(Logic):
         post['author'] = self.ul.get_user_by_id(author_id)
         post['tags'] = tags
         post["ttags"] = ','.join([t.get('name') for t in tags])
+        keywords = ','.join([c.get('name') for c in category])
+        post["keywords"] = keywords + "," + post.get("ttags")
         post['category'] = category
         post['cids'] = [c.get('id') for c in category]
         post['comment_num'] = self.comment.count_post_comments(_id)

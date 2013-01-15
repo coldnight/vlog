@@ -131,8 +131,10 @@ class WebHandler(BaseHandler):
         kwargs['categories'] = categories.get('data')
         kwargs['SITE_TITLE'] = self.option.site_title
         kwargs['SITE_SUB_TITLE'] = self.option.sub_title
-        kwargs['description'] = self.option.description
-        kwargs['keywords'] = self.option.keywords
+        if not kwargs.has_key("description"):
+            kwargs['description'] = self.option.description
+        if not kwargs.has_key("keywords"):
+            kwargs['keywords'] = self.option.keywords
         kwargs['page'] = Logic.page.get_all_pages()
         kwargs['uid'] = self.uid
         kwargs['username'] = self.username
@@ -161,7 +163,9 @@ class PostHandler(WebHandler):
         if self.uid and self.username:
             user = Logic.user.get_user_by_id(self.uid)
         self.render("page.jinja", post = post, post_comments = comments.get("data"), user = user,
-                    title=post.get("title"), pageinfo = comments.get("pageinfo"))
+                    title=post.get("title"), pageinfo = comments.get("pageinfo"),
+                    description = post.get("short_content"),
+                    keywords = post.get("keywords"))
 
     def post(self, pid, index):
         name = self.get_argument("name")
