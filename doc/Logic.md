@@ -69,10 +69,22 @@ tuple (skip, limit)
 * data    返回的数据
 * pageinfo  分页信息(可省略)    dict
 
-## 返回
+### 返回
 dict
 {
     status : True  // 表示成功
     data : data    // 返回数据
     pageinfo : pageinfo // 分页信息(如果参数传的话)
+}
+
+## error
+
+### 参数
+* errmsg   错误信息
+
+### 返回
+dict
+{
+    status : False // 表示失败
+    errmsg : ''    // 错误信息
 }

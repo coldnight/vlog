@@ -19,7 +19,6 @@ with MySQLContext("table") as op:
 * table    数据库名称 (可选)
 
 ## insert
-### 介绍
 插入数据到MySQL数据库
 
 ### 参数
@@ -31,7 +30,6 @@ with MySQLContext("table") as op:
 long 插入数据的id
 
 ## count
-### 介绍
 统计条数
 
 ### 参数
@@ -41,7 +39,6 @@ long 插入数据的id
 long
 
 ## max
-### 介绍
 返回某列的最大值
 
 ### 参数
@@ -51,7 +48,6 @@ long
 long
 
 ## select_one
-### 介绍
 查询单条
 
 ### 参数
@@ -64,14 +60,13 @@ dict
 {列名:值,...}
 
 ## select
-### 介绍
 查询
 
 ### 参数
 * fields     (同select_one)
 * order      (同上)
 * where      (同上)
-*limit       限定查询的条数  tuple(skip, limit) or int (limit)
+* limit       限定查询的条数  tuple(skip, limit) or int (limit)
 
 ### 返回
 [{列名:值,...},...]
