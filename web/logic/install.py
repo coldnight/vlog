@@ -10,8 +10,6 @@ import os
 import MySQLdb as mysqldb
 from config import ROOT_PATH
 sql = """
-drop database if exists `{0}`;
-create database if not exists `{0}`;
 use `{0}`;
 drop table if exists `{1}code`;
 create table if not exists `{1}code`(
