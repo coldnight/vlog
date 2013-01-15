@@ -14,7 +14,9 @@ class PageLogic(PostLogic):
         with self._mc() as op:
             where = "`id`='{0}' and `type`='2'"\
                     " and `enabled`='1'".format(op.escape(pid))
-            r = self.insert_info(op.select_one(where = where))
+            r = op.select_one(where = where)
+            if r:
+                r = self.insert_info(r)
 
         return self.success(r)
 

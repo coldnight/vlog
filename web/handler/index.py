@@ -142,6 +142,8 @@ class IndexHandler(WebHandler):
     def get(self, index = 1):
         index = index if index else 1
         posts = Logic.post.get_posts(int(index), self.pagesize)
+        if not posts.get("data"):
+            self.send_error(404, info = u"页面不存在")
         self.render('index.jinja', posts=posts.get('data'),
                     pageinfo=posts.get('pageinfo'))
 
@@ -150,6 +152,8 @@ class PostHandler(WebHandler):
     def get(self, pid, index):
         index = index if index else 1
         post = Logic.post.get_post_by_id(pid).get("data")
+        if not post:
+            self.send_error(404, info = u"文章不存在")
         comments = Logic.comment.get_post_comments(pid, index, self.pagesize)
         user = {}
         if self.uid and self.username:
@@ -203,6 +207,8 @@ class PageHandler(WebHandler):
         else:
             user = None
         page = Logic.page.get_page(pid).get("data")
+        if not page:
+            self.send_error(404, info = u"页面不存在")
         comments = Logic.comment.get_post_comments(page.get("id"), index,
                                                     self.pagesize)
         post_comments = comments.get("data")
