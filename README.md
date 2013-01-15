@@ -28,7 +28,7 @@ vLog 是一个轻量级的日志/博客系统,使用Markdown格式书写博文,�
 * Memcached 1.4.5
 
 
-## 依赖包
+## 依赖库
 * tornado
 * jinja2
 * MySQLdb
