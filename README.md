@@ -58,4 +58,4 @@ vLog 是一个轻量级的日志/博客系统,使用Markdown格式书写博文,�
 比如每篇文章的没有替换掉的图片链接
 
 # 参与开发
-请参阅[开发指南](doc/DevDoc.md), [业务逻辑编写指南](doc/Logic.md), [数据库操作指南](doc/MySQL.md), [业务请求开发指南](doc/Handler.md), [主题开发指南](doc/Theme.md)
+请参阅[开发指南](/coldnight/vlog/blob/master/doc/DevDoc.md), [业务逻辑编写指南](/coldnight/vlog/blob/master/doc/Logic.md), [数据库操作指南](/coldnight/vlog/blob/master/doc/MySQL.md), [业务请求开发指南](/coldnight/vlog/blob/master/doc/Handler.md), [主题开发指南](/coldnight/vlog/blob/master/doc/Theme.md)
