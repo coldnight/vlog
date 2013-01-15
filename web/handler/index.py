@@ -104,10 +104,12 @@ class WebHandler(BaseHandler):
     def get_error_html(self, status_code = 500, **kwargs):
         errpath = os.path.join(self.template_path,
                                "{0}.jinja".format(status_code))
+        if not DEBUG and kwargs.has_key("exception"):
+            kwargs["exception"] = None
         if os.path.exists(errpath):
-            if not DEBUG and kwargs.has_key("exception"):
-                kwargs["exception"] = None
             self.render("{0}.jinja".format(status_code), **kwargs)
+        else:
+            self.render("error.jinja", **kwargs)
 
     def prepare(self):
         super(WebHandler, self).prepare()

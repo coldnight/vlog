@@ -2,11 +2,15 @@
 {% block content %}
 <div>
     <article class="hentry" role="article">
+{% if status_code == 500 %}
     {% if exception %}
     {{ exception }}
     {% else %}
     当前页面发生了错误,请联系管理员
     {% endif %}
+{% else %}
+<h1>{{ info }} </h1>
+{% endif %}
 </atricle>
 </div>
 {% endblock %}
