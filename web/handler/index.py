@@ -11,7 +11,7 @@ import os
 from MySQLdb import OperationalError
 from tornado.web import StaticFileHandler
 
-from config import STATIC_PATH as STATIC_ROOT, UPLOAD_PATH
+from config import STATIC_PATH as STATIC_ROOT, UPLOAD_PATH, THEME
 from core.web import BaseHandler
 
 from web.logic import Logic
@@ -91,7 +91,7 @@ class Install(BaseHandler):
 class WebHandler(BaseHandler):
     """ web前台handler基类 """
     #TODO 可配置的主题
-    template_path = os.path.join(BaseHandler.template_path, 'octopress')
+    template_path = os.path.join(BaseHandler.template_path, THEME)
     option = Logic.option
 
     def initialize(self):

@@ -30,7 +30,7 @@ HANDLER = 'web.handler'
 
 UTEST = 'utest'
 
-CODERUN = "http://1.pyec.sinaapp.com/"
+THEME = 'octopress'          # 主题
 
 LOG_PATH = os.path.join(ROOT_PATH, 'logs/default.log')
 

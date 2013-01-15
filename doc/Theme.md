@@ -2,7 +2,7 @@
 =============
 # 介绍
 模板引擎使用 jinja2 ,所以主题模板语言应该使用与之想对应的模板语言,
-主题必须包含两个文件,分别是 索引页面(index.jinja) 和详情页面 (page.jinja),
+主题必须包含两个文件,分别是 索引页面(index.jinja) 和详情页面 (page.jinja)
 
 # 主要模板变量
 ## 全局模板变量
@@ -126,3 +126,46 @@
     url               // 评论url
     allowed           // 是否通过
 }, ...]
+
+# 主要接口
+## 添加评论
+### url
+/post/(pid)
+
+### 方法
+POST
+
+### 参数
+name
+email
+url
+content
+parent
+
+## 编辑文章
+### url
+/admin/editpost/(pid)
+
+### 方法
+GET
+
+## 编辑页面
+### url
+/admin/editpage/(pid)
+
+### 方法
+GET
+
+## 允许评论通过
+### url
+/admin/allow/comment/(pid)/(cid)/(page|post)
+
+### 方法
+GET
+
+## 删除评论
+### url
+/admin/del/comment/(post|page)/(cid)
+
+### 方法
+GET
