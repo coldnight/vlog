@@ -36,4 +36,4 @@ LOG_PATH = os.path.join(ROOT_PATH, 'logs/default.log')
 
 EMAIL_ACCOUNT = "blog.linuxzen@gmail.com"
 
-EMAIL_PASSWORD = "wanghui00--"
+EMAIL_PASSWORD = ""
