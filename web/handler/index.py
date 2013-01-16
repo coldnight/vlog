@@ -189,6 +189,7 @@ class PostHandler(WebHandler):
 
 
 class TitlePostHandler(WebHandler):
+    #XXX (.+?) 捕捉中文如不以/结尾则会传入一个%值 奇怪
     _url = r"/\d{4}/\d{1,2}/\d{1,2}/(.+?)/(?:comment-page)*-*(\d*)"
     def get(self, link_title, index):
         index = index if index else 1
@@ -251,7 +252,7 @@ class PageHandler(WebHandler):
                     post_comments = post_comments)
 
 class DateHandler(WebHandler):
-    _url = r"/date/(\d+)/(\d+)/?(\d*)"
+    _url = r"/date/(\d+)/(\d+)/(\d*)"
     def get(self, year, month, index):
         index = index if index else 1
         data = Logic.post.get_by_month(year, month, index, self.pagesize)
