@@ -150,7 +150,8 @@ class IndexHandler(WebHandler):
         if not posts.get("data"):
             self.send_error(404, info = u"页面不存在")
         self.render('index.jinja', posts=posts.get('data'),
-                    pageinfo=posts.get('pageinfo'))
+                    pageinfo=posts.get('pageinfo'),
+                    base_path = "/")
 
 class PostHandler(WebHandler):
     _url = r"/post/(\d+)/?(\d*)"
@@ -218,7 +219,8 @@ class CategoryHandler(WebHandler):
             self.send_error(404, info=u"没有 {0} 这个类别".format(cate))
         posts = Logic.post.get_post_by_category(cid, int(index), self.pagesize)
         self.render("index.jinja", posts = posts.get("data"),
-                    pageinfo = posts.get("pageinfo"), title = title)
+                    pageinfo = posts.get("pageinfo"), title = title,
+                    base_path = "/category/{0}/".format(cate))
 
 class TagHandler(WebHandler):
     _url = r"/tag/(.+?)/(\d*)"
@@ -229,7 +231,8 @@ class TagHandler(WebHandler):
             self.send_error(404, info=u"没有 {0} 这个标签".format(tag))
         posts = Logic.post.get_post_by_tag(tid, int(index), self.pagesize)
         self.render("index.jinja", posts = posts.get("data"),
-                    pageinfo = posts.get("pageinfo"), title  = tag)
+                    pageinfo = posts.get("pageinfo"), title  = tag,
+                    base_path = "/tag/{0}/".format(tag))
 
 class PageHandler(WebHandler):
     #XXX 如不传(.+?)后面的/会传进一个很奇特的%字符导致解码失败
@@ -259,7 +262,8 @@ class DateHandler(WebHandler):
         pageinfo = data.get("pageinfo")
         posts = data.get("data")
         self.render("index.jinja", posts = posts, pageinfo = pageinfo,
-                    title = u"{0}年 {1} 月".format(year, month))
+                    title = u"{0}年 {1} 月".format(year, month),
+                    base_path = "/date/{0}/{1}".format(year, month))
 
 class FeedHandler(StaticFileHandler):
     def initialize(self):

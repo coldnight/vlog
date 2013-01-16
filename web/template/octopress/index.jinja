@@ -35,11 +35,11 @@
    <nav role="pagination">
        <div>
        {% if pageinfo.pageindex > 1 %}
-        <a class="prev" href="{{request.path}}{{ pageinfo.prevpage }}">&larr; Prev</a>
+        <a class="prev" href="{{base_path}}{{ pageinfo.prevpage }}">&larr; Prev</a>
         {% endif %}
          &nbsp;
          {% if pageinfo.pageindex < pageinfo.totalpage %}
-        <a class="next" href="{{request.path}}{{ pageinfo.nextpage }}">Next &rarr;</a>
+        <a class="next" href="{{base_path}}{{ pageinfo.nextpage }}">Next &rarr;</a>
         {% endif %}
        </div>
    </nav>
