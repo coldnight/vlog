@@ -125,7 +125,7 @@ $("#submit").click(function(){
         data:data,
         success: function(data){
             if (data.status) {
-                //window.location= "/admin/edit" + item  + "/" + data.data;
+                window.location= "/admin/edit" + item  + "/" + data.data;
             }else{
                 alert(data.errmsg);
             }
