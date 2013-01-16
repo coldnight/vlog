@@ -263,7 +263,7 @@ class DateHandler(WebHandler):
         posts = data.get("data")
         self.render("index.jinja", posts = posts, pageinfo = pageinfo,
                     title = u"{0}年 {1} 月".format(year, month),
-                    base_path = "/date/{0}/{1}".format(year, month))
+                    base_path = "/date/{0}/{1}/".format(year, month))
 
 class FeedHandler(StaticFileHandler):
     def initialize(self):
