@@ -81,11 +81,22 @@
             </ul>
             {% if pageinfo.totalpage > 1 %}
             <p class="topline grey">
+            {% if ispage %}
             {% if pageinfo.pageindex > 1 %}
-            <a href="/post/{{post.id}}/{{pageinfo.prevpage}}#comments">上一页</a>
+            <a href="/page/{{post.link_title}}/comment-page-{{pageinfo.prevpage}}#comments">上一页</a>
             {% endif %}
             {% if pageinfo.pageindex < pageinfo.totalpage %}
-            <a href="/post/{{post.id}}/{{pageinfo.nextpage}}#comments"> 下一页</a>
+            <a href="/page/{{post.link_title}}/comment-page-{{pageinfo.nextpage}}#comments"> 下一页</a>
+            {% endif %}
+            {% else %}
+            {% if pageinfo.pageindex > 1 %}
+            <a href="/{{
+                post.date.year}}/{{post.date.month}}/{{post.date.day}}/{{post.link_title}}/comment-page-{{pageinfo.prevpage}}#comments">上一页</a>
+            {% endif %}
+            {% if pageinfo.pageindex < pageinfo.totalpage %}
+            <a href="/{{
+                post.date.year}}/{{post.date.month}}/{{post.date.day}}/{{post.link_title}}/comment-page-{{pageinfo.nextpage}}#comments"> 下一页</a>
+            {% endif %}
             {% endif %}
             </p>
             {% endif %}

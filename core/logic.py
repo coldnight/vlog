@@ -27,6 +27,16 @@ class Logic(object):
     def init(self):
         pass
 
+    def get_table(self):
+        return self.get_op().table
+
+    def get_op(self):
+        return MC.get_op(self._table)
+
+    def execute_sql(self, sql, commit = False,  *args, **kwargs):
+        op = self.get_op()
+        return op.execute(sql, commit, *args, **kwargs)
+
     def handle_page(self, total, index, size):
         index, size = int(index), int(size)
         totalpage = total / size if total % size == 0 else total / size + 1

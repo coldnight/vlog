@@ -102,6 +102,7 @@ class WebHandler(BaseHandler):
             self.cache.set("pagesize", self.pagesize)
 
     def get_error_html(self, status_code = 500, **kwargs):
+        kwargs['status_code'] = status_code
         errpath = os.path.join(self.template_path,
                                "{0}.jinja".format(status_code))
         if not DEBUG and kwargs.has_key("exception"):
@@ -162,7 +163,8 @@ class PostHandler(WebHandler):
         user = {}
         if self.uid and self.username:
             user = Logic.user.get_user_by_id(self.uid)
-        self.render("page.jinja", post = post, post_comments = comments.get("data"), user = user,
+        self.render("page.jinja", post = post,
+                    post_comments = comments.get("data"), user = user,
                     title=post.get("title"), pageinfo = comments.get("pageinfo"),
                     description = post.get("short_content"),
                     keywords = post.get("keywords"))
@@ -185,34 +187,59 @@ class PostHandler(WebHandler):
             Logic.comment.allow_comment(cid)
         self.write({"status":True, "msg":u"评论提交成功,等待管理员审核"})
 
-class CategoryHandler(WebHandler):
-    _url = r"/category/(\d+)/(\d*)"
-    def get(self, cid, index):
+
+class TitlePostHandler(WebHandler):
+    _url = r"/\d{4}/\d{1,2}/\d{1,2}/(.+?)/(?:comment-page)*-*(\d*)"
+    def get(self, link_title, index):
         index = index if index else 1
-        cate = Logic.category.get_category(cid).get("name")
+        post = Logic.post.get_post_by_link(link_title).get("data")
+        pid = post.get("id")
+        if not post:
+            self.send_error(404, info = u"文章不存在")
+        comments = Logic.comment.get_post_comments(pid, index, self.pagesize)
+        user = {}
+        if self.uid and self.username:
+            user = Logic.user.get_user_by_id(self.uid)
+        self.render("page.jinja", post = post,
+                    post_comments = comments.get("data"), user = user,
+                    title=post.get("title"), pageinfo = comments.get("pageinfo"),
+                    description = post.get("short_content"),
+                    keywords = post.get("keywords"))
+
+
+class CategoryHandler(WebHandler):
+    _url = r"/category/(.+?)/(\d*)"
+    def get(self, cate, index):
+        index = index if index else 1
         title = cate
+        cid = Logic.category.check_exists(cate).get("id")
+        if not cid:
+            self.send_error(404, info=u"没有 {0} 这个类别".format(cate))
         posts = Logic.post.get_post_by_category(cid, int(index), self.pagesize)
         self.render("index.jinja", posts = posts.get("data"),
                     pageinfo = posts.get("pageinfo"), title = title)
 
 class TagHandler(WebHandler):
-    _url = r"/tag/(\d+)/(\d*)"
-    def get(self, tid, index):
+    _url = r"/tag/(.+?)/(\d*)"
+    def get(self, tag, index):
         index = index if index else 1
-        tag = Logic.tag.get_tag(tid).get("name")
+        tid = Logic.tag.check_exists(tag)
+        if not tid:
+            self.send_error(404, info=u"没有 {0} 这个标签".format(tag))
         posts = Logic.post.get_post_by_tag(tid, int(index), self.pagesize)
         self.render("index.jinja", posts = posts.get("data"),
                     pageinfo = posts.get("pageinfo"), title  = tag)
 
 class PageHandler(WebHandler):
-    _url = r"/page/(\d+)/?(\d*)"
-    def get(self, pid, index):
+    #XXX 如不传(.+?)后面的/会传进一个很奇特的%字符导致解码失败
+    _url = r"/page/(.+?)/(?:comment-page-)*(\d*)"
+    def get(self, link_title, index):
         index = index if index.strip() else 1
         if self.uid and self.username:
             user = Logic.user.get_user_by_id(self.uid)
         else:
             user = None
-        page = Logic.page.get_page(pid).get("data")
+        page = Logic.page.get_page_by_link(link_title).get("data")
         if not page:
             self.send_error(404, info = u"页面不存在")
         comments = Logic.comment.get_post_comments(page.get("id"), index,

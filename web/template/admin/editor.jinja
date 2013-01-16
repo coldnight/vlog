@@ -1,4 +1,6 @@
-
+<p><strong>标题</strong>
+<input type="text" id="title" style="width:430px;" value="{% if post %}{{ post.title }} {% endif %}" tabindex="2" /> </p>
+<input type="hidden" id="link_title" value="" />
 <p>
 <div id="epiceditor"
 style="width:800px;float:left;height:500px;margin-right:10px;"></div></p>
@@ -13,6 +15,7 @@ style="width:800px;float:left;height:500px;margin-right:10px;"></div></p>
 <script type="text/javascript" src="/static/epiceditor/js/epiceditor.min.js"></script>
 <script type="text/javascript" src="/static/js/jquery.form.js"></script>
 <script type="text/javascript">
+var defaultContent = $("#source").text();
 var opts = {
     container: 'epiceditor',
     basePath: '/static/epiceditor',
@@ -48,7 +51,7 @@ function checkImgType(filename) {
       return false;  
   }  
   return true;  
-}   
+}
 
 // 上传图片
 $("#upload").click(function(){
@@ -71,6 +74,12 @@ $("#upload").click(function(){
     } else {
         alert("上传文件不是图片");
     }
+});
+
+// 获取链接标题
+$("#title").change(function(){
+    var title = $("#title").val();
+    vlog.get_link_title(title, "#link_title")
 });
 </script>
 <!-- rich editer end -->

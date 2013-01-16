@@ -133,6 +133,11 @@ class DatabaseOp(object):
         self.logger.debug('query mysql : {0}'.format(sql))
         return self.cursor.execute(sql)
 
+    def execute(self, sql, commit = False, *args, **kwargs):
+        self.cursor.execute(sql, *args, **kwargs)
+        self.commit = commit
+        return self.cursor
+
     def _format_set(self, set_dict):
         result = ''
         for k, v in set_dict.items():
@@ -146,6 +151,9 @@ class DatabaseOp(object):
             tmp = dict(((key, l[i]) for i, key in enumerate(fields)))
             result.append(tmp)
         return result
+
+    def get_table(self):
+        return self.table
 
     def get_table_fields(self):
         if self.table:
@@ -188,8 +196,7 @@ class MySQLContext:
 
     @classmethod
     def get_op(cls, table):
-        lc = MySQLContext(table)
-        return lc._op
+        return MySQLContext(table)._op
 
     def get_cursor(self):
         return self.conn.cursor

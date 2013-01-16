@@ -20,6 +20,9 @@ class PageLogic(PostLogic):
 
         return self.success(r)
 
+    def get_page_by_link(self, link_title):
+        return self.get_post_by_link(link_title, 2)
+
     def get_all_pages(self):
         with self._mc() as op:
             where="`type`='2' and `enabled`='1'"

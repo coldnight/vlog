@@ -58,6 +58,17 @@ class PostLogic(Logic):
             r = self.insert_info(r)
         return self.success(r)
 
+    def get_post_by_link(self, link_title, typ = 1):
+        with self._mc() as op:
+            where = "`link_title`='{0}' and `enabled`='1'"\
+                    " and `isdraft`='0' and `type`='{1}'".format(
+                        op.escape(link_title), op.escape(typ))
+            r = op.select_one(where = where)
+
+        if r:
+            r = self.insert_info(r)
+        return self.success(r)
+
     def get_titles(self, ids = None, size = 5):
         """ 根据id获取文章标题或者后去最新10篇文章的标题 """
         with self._mc() as op:
@@ -74,11 +85,12 @@ class PostLogic(Logic):
         [result.update({p.get('id'):p.get('title')}) for p in posts]
         return result
 
-    def get_new(self):
-        posts = self.get_titles()
-        posts = [{'id':key, 'title':value} for key, value in posts.items()]
-        posts = sorted(posts, key = lambda x:x['id'], reverse = True)
-        return posts
+    def get_new(self, size = 5):
+        with self._mc() as op:
+            where = "`type`='1' and `enabled`='1'"
+            limit = self.handle_limit(size = size)
+            order = {"id":-1}
+            return op.select(where = where, order = order, limit = limit)
 
     def get_months(self):
         """ 获取所有文章归档年月 """
@@ -206,3 +218,21 @@ class PostLogic(Logic):
         with self._mc() as op:
             where = "`id`='{0}'".format(op.escape(pid))
             return op.remove(where=where)
+
+    def get_link_title(self, title, num = None, edit = False, pid = None):
+        num = num if num else 0
+        if num:
+            title += '-' + str(num+1)
+        title = title.replace(' ', '-').replace('+', '-').replace('/', '-').\
+                replace('=', '-').replace('%', '-').replace('?', '-').\
+                replace('&', '-').replace('#', '-')
+        exists = self.check_link_title_exists(title)
+        if exists:
+            return self.get_link_title(title, num + 1)
+        return title
+
+    def check_link_title_exists(self, title):
+        with self._mc() as op:
+            where = "`link_title`='{0}'".format(title.encode('utf-8'))
+            return op.select_one(where = where)
+

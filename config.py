@@ -4,7 +4,7 @@ import sys
 
 PORT = 18888
 
-DEBUG = False
+DEBUG = True
 
 CACHED = True
 
@@ -37,3 +37,5 @@ LOG_PATH = os.path.join(ROOT_PATH, 'logs/default.log')
 EMAIL_ACCOUNT = "blog.linuxzen@gmail.com"
 
 EMAIL_PASSWORD = ""
+
+__version__ = (0, 1, 0)

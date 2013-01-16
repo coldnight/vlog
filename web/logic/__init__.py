@@ -14,9 +14,11 @@ from .page import PageLogic
 from .options import GlobalOption, Options
 from .user import UserLogic
 from .upload import UploadLogic
+from .update import UpdateLogic
 
 class Logic(object):
     """ 使用类属性实例化各个逻辑类 """
+    UpdateLogic()
     user = UserLogic()
     tag = TagLogic()
     category = CategoryLogic()

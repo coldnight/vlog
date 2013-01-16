@@ -63,17 +63,19 @@ class AddPost(AdminHandler):
     def get(self):
         categories = Logic.category.get_categories()
         tags = Logic.tag.get_tags()
-        self.render('admin_addpost.jinja', categories = categories.get('data'),
-                    tags = tags.get('data'))
+        self.render('admin_post.jinja', categories = categories.get('data'),
+                    tags = tags.get('data'), isedit=False, ispage=False)
 
     def post(self):
         title = self.get_argument('title')
+        link_title = self.get_argument("link_title")
         source = self.get_argument("source")
         content = self.get_argument('content')
         tags = self.get_argument('tags')
         category = self.get_argument('category')
         post_dict = {"title":title, "content":content, "source":source,
-                     "category":category, "tags":tags, "author":self.uid}
+                     "category":category, "tags":tags, "author":self.uid,
+                     'link_title': link_title}
         r = Logic.post.post(post_dict)
         self.handle_sitemap()
         self.handle_rss()
@@ -81,14 +83,15 @@ class AddPost(AdminHandler):
 
 class AddPage(AdminHandler):
     def get(self):
-        self.render("admin_addpage.jinja")
+        self.render("admin_post.jinja", isedit = False, ispage = True)
 
     def post(self):
         title = self.get_argument('title')
+        link_title = self.get_argument("link_title")
         source = self.get_argument("source")
         content = self.get_argument('content')
         page_dict = {"title":title, "content":content, "source":source,
-                     "author":self.uid}
+                     "author":self.uid, 'link_title':link_title}
         self.handle_sitemap()
         self.handle_rss()
         self.write(Logic.page.add_page(page_dict))
@@ -99,15 +102,19 @@ class EditPage(AdminHandler):
         page = Logic.page.get_page(pid)
         if not page:
             self.redirect('/admin/addpage')
-        self.render("admin_editpage.jinja", page = page.get("data"))
+        self.render("admin_post.jinja", post = page.get("data"),
+                    isedit = True, ispage = True)
 
     def post(self, pid):
         title = self.get_argument('title')
+        link_title = self.get_argument("link_title", None)
         source = self.get_argument("source")
         content = self.get_argument('content')
         pid = self.get_argument("id")
         page_dict = {"title":title, "content":content, "source":source,
                      "author":self.uid}
+        if link_title:
+            page_dict['link_title'] =  link_title
         r = Logic.page.edit_page(pid, page_dict)
         self.handle_sitemap()
         self.handle_rss()
@@ -120,11 +127,13 @@ class EditPost(AdminHandler):
         categories = Logic.category.get_categories()
         if not post:
             self.redirect('/admin/addpost')
-        self.render("admin_editpost.jinja", post = post.get("data"),
-                    categories = categories.get("data"))
+        self.render("admin_post.jinja", post = post.get("data"),
+                    categories = categories.get("data"), isedit = True,
+                    ispage = False)
 
     def post(self, pid):
         title = self.get_argument('title')
+        link_title = self.get_argument("link_title", None)
         source = self.get_argument("source")
         content = self.get_argument('content')
         tags = self.get_argument('tags')
@@ -132,6 +141,8 @@ class EditPost(AdminHandler):
         pid = self.get_argument("id")
         post_dict = {"title":title, "content":content, "source":source,
                      "category":category, "tags":tags}
+        if link_title:
+            post_dict['link_title'] =  link_title
         r = Logic.post.edit(pid, post_dict)
         self.handle_sitemap()
         self.handle_rss()
@@ -253,3 +264,15 @@ class CleanHandler(AdminHandler):
     def get(self):
         self.cache.flush()
         self.redirect("/admin/")
+
+
+class AjaxHandler(AdminHandler):
+    def post(self):
+        result = {"status":True}
+        action = self.get_argument("action")
+        if action == "get_link_title":
+            title = self.get_argument("title")
+            r = Logic.post.get_link_title(title)
+            result["data"] = r
+
+        self.write(result)

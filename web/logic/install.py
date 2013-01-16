@@ -8,7 +8,8 @@
 #
 import os
 import MySQLdb as mysqldb
-from config import ROOT_PATH
+from config import ROOT_PATH, __version__
+
 sql = """
 use `{0}`;
 drop table if exists `{1}code`;
@@ -47,10 +48,13 @@ create table if not exists `{1}options`(
     INDEX(`key`)
     )character set utf8;
 
+insert into `{1}options`(`key`, `value`) VALUES('version', {2});
+
 drop table if exists `{1}post`;
 create table if not exists `{1}post`(
     id INT AUTO_INCREMENT NOT NULL,
     title VARCHAR(255) NOT NULL,
+    link_title VARCHAR(255) NULL,
     content TEXT NOT NULL,
     source TEXT NULL,
     author INT NOT NULL,
@@ -98,6 +102,7 @@ drop table if exists `{1}category`;
 create table if not exists `{1}category`(
     id INT AUTO_INCREMENT NOT NULL,
     `name` VARCHAR(255) NOT NULL,
+    `description` VARCHAR(255) NULL,
     date TIMESTAMP NOT NULL,
     PRIMARY KEY(`id`),
     INDEX(`name`)
@@ -126,7 +131,8 @@ def install(mysql_host, mysql_port, mysql_user, mysql_pwd,
     try:
         conn = mysqldb.Connection(host = mysql_host, port = int(mysql_port),
                                   user = mysql_user, passwd = mysql_pwd)
-        sql = sql.format(mysql_name, mysql_prev)
+        sql = sql.format(mysql_name, mysql_prev,
+                         float('0'.join([str(v) for v in __version__])))
         cursor = conn.cursor()
         for s in sql.split(';'):
             if not s.strip(): continue

@@ -4,7 +4,9 @@
 {% for obj in posts %}
 <article>
    <header>
-       <h1 class="entry-title"><a href="/post/{{ obj.id}}" rel="bookmark" title="Permanent Link to {{obj.title}}">{{obj.title}}</a></h1>
+       <h1 class="entry-title"><a
+       href="/{{obj.date.year}}/{{obj.date.month}}/{{obj.date.day}}/{{
+        obj.link_title}}/" rel="bookmark" title="Permanent Link to {{obj.title}}">{{obj.title}}</a></h1>
        <p class="meta">
         <small>{{obj.date}} in 
         {% for cate in obj.category %}

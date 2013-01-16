@@ -7,6 +7,7 @@
 #   Desc    :   生成站点地图
 #
 import os
+from urllib import quote
 from jinja2 import Environment, FileSystemLoader
 
 from config import TEMPLATE_PATH, STATIC_PATH
@@ -26,22 +27,24 @@ def handle_sitemap(logic, request):
     urls.append(make_url('/', now(), 'weekly', '0.8'))
     pages = logic.page.get_all_pages()
     for p in pages:
-        path = "/page/{0}".format(p.get('id'))
+        path = "/page/{0}/".format(quote(p.get('link_title').encode("utf-8")))
         urls.append(make_url(path, p.get('date')))
 
     posts = logic.post.get_all_posts()
     for p in posts:
-        path = "/post/{0}".format(p.get('id'))
+        date = p.get("date")
+        path = "/{0}/{1}/{2}/{3}/".format(date.year, date.month, date.day,
+                                         quote(p.get('link_title').encode("utf-8")))
         urls.append(make_url(path, p.get('date')))
 
     cates = logic.category.get_categories().get("data")
     for c in cates:
-        path = "/category/{0}".format(c.get('id'))
+        path = "/category/{0}/".format(quote(c.get('name').encode("utf-8")))
         urls.append(make_url(path, now(), 'weekly', '0.5'))
 
     tags = logic.tag.get_tags().get("data")
     for t in tags:
-        path = "/tag/{0}".format(t.get("id"))
+        path = "/tag/{0}/".format(quote(t.get("name").encode("utf-8")))
         urls.append(make_url(path, now(), 'weekly', '0.1'))
 
     months = logic.post.get_months()

@@ -18,7 +18,7 @@
     <ul id="new_posts">
     {% for n in new %}
         <li class="post">
-            <a href="/post/{{n.id}}" alt="{{ n.title }}"> {{ n.title }}</a>
+            <a href="/{{n.date.year}}/{{n.date.month}}/{{n.date.day}}/{{n.link_title}}/" alt="{{ n.title }}"> {{ n.title }}</a>
         </li>
     {% endfor %}
     </ul>
@@ -30,7 +30,7 @@
     <ul id="Category_list">
     {% for cat in categories %}
         <li class="category">
-            <a title="View all posts filed under {{cat.name}}" href="/category/{{cat.id}}/">{{cat.name}} <span class="tag_meta">({{cat.post_num}})</span></a>
+            <a title="View all posts filed under {{cat.name}}" href="/category/{{cat.name}}/">{{cat.name}} <span class="tag_meta">({{cat.post_num}})</span></a>
         </li>
     {% endfor %}
     </ul>
@@ -42,7 +42,7 @@
     <h1>标签</h1>
     <p id="top_tags">
     {% for tagi in tags %}
-        <a title="{{tagi.name}}" href="/tag/{{tagi.id}}/">{{tagi.name}}</a> <span class="tag_meta">({{tagi.post_num}})</span> 
+        <a title="{{tagi.name}}" href="/tag/{{tagi.name}}/">{{tagi.name}}</a> <span class="tag_meta">({{tagi.post_num}})</span> 
     {% endfor %}
     </p>
 </section>

@@ -1,0 +1,136 @@
+{% extends "base.jinja" %}
+{%block content %}
+<span id="h"></span>
+<div id="source" style="display:none;">{% if post %}{{ post.source }}{% endif %}</div>
+{% if ispage %}
+    {% if isedit %}
+        <h2>编辑文章 (<a href="{{request.path}}">重新载入</a> | 
+        <a href="/page/{{post.link_title}}/" target="_blank">查看该页面</a> | 
+        <a href="/admin/del/page/{{post.id}}" rel="">删除该页面 </a>)</h2>
+        <input type="hidden" id="post_id" value="{{ post.id }}" />
+        <p id="text" style="color:red;"></p>
+        {% include "editor.jinja" %}
+        <p><button id="submit" class="bigbtn"> 提交编辑 </button></p>
+    {% else %}
+        <h2>添加页面</h2>
+        <p id="text" style="color:red;"></p>
+        {% include "editor.jinja" %}
+        <p><button id="submit" class="bigbtn"> 添加页面</button></p>
+    {% endif %}
+{%else %}
+    {% if isedit %}
+        <h2>编辑文章 (<a href="{{request.path}}">重新载入</a> | 
+        <a href="/{{post.date.year}}/{{post.date.month}}/{{post.date.day}}/{{post.link_title}}/" target="_blank">查看该文章</a> | 
+        <a href="/admin/del/post/{{post.id}}" rel="">删除该文章</a>)</h2>
+        <p id="text" style="color:red;"></p>
+        {% include "editor.jinja" %}
+        <p><button id="submit" class="bigbtn"> 提交编辑 </button></p>
+        <input type="hidden" id="post_id" value="{{ post.id }}" />
+    {% else %}
+        <h2>添加文章</h2>
+        <p id="text" style="color:red;"></p>
+        {% include "editor.jinja" %}
+        <p><button id="submit" class="bigbtn"> 提交文章 </button></p>
+    {% endif %}
+    <p>标签: <input type="text" id="tags" style="width:360px;" value="{% if post %}{{post.ttags}}{% endif %}" tabindex="4" /> 用逗号分隔','<br/>
+    <p>分类: <br />
+    <div id="categries">
+        {% for cat in categories %}
+            {% if post and cat.id in post.cids %}
+                <input class="category" type="checkbox" value="{{ cat.id }}" checked /> {{ cat.name }} <br />
+            {% else %}
+                <input class="category" type="checkbox" value="{{ cat.id }}" /> {{ cat.name }} <br />
+            {%endif %}
+        {% endfor %}
+    </div>
+    <div id="addcate" style="display:none">
+        <p>分类名称 <input type="text" name="name" id="categoryname" />
+        <button id="btn_add_cate" class="btn"> 添加 </button></p>
+    </div>
+    <a id="click_add_cate">添加类别</a>
+    <p>
+    <label>关闭评论 <input type="checkbox" value="True" tabindex="5" /></label>
+
+    </p>
+{% endif %}
+
+<script type="text/javascript">
+$("#click_add_cate").click(function(){$("#addcate").show()})
+
+$("#btn_add_cate").click(function() {
+    var name = $("#categoryname").val();
+    $.ajax({
+        type: "POST",
+        url: "/admin/addcategory",
+        dataType: "json",
+        data:{"name":name},
+        success: function(data){
+            if (data.status) {
+                alert("成功");
+                var cate = data.data;
+                $("#categires").append("<input class='category' type='checkbox' value='"+cate.id + "' /> " + cate.name + "<br />");
+                $("#addcate").hide();
+            }else {
+                alert(data.errmsg);
+            }
+        }
+    });
+});
+
+$("#submit").click(function(){
+    editor.preview();
+    var title = $("#title").val();
+    var link_title = $("#link_title").val();
+    var source = editor.exportFile();
+    var content = editor.previewer.innerHTML;
+    var data = {'title':title, 'content':content,
+                'source':source, 'link_title':link_title}
+{% if ispage %}
+    var item = "page";
+    {% if isedit %}
+    var url = "/admin/editpage";
+    data['id'] = $("#post_id").val();
+    {% else %}
+    var url = "/admin/addpage";
+    {% endif %}
+{% else %}
+    var item = "post";
+    {% if isedit %}
+    var url = "/admin/editpost";
+    data['id'] = $("#post_id").val();
+    {% else %}
+    var url = "/admin/addpost";
+    {% endif %}
+    var tags = $("#tags").val();
+    var category = new Array();
+    $(".category").each(function(i, el){
+        if (el.checked){
+            category.push(el.value);
+        }
+    });
+
+    if (!category){
+        alert("请选择类别");
+    }
+
+    cate = category.join();
+    data['tags'] =  tags;
+    data['category'] = cate;
+{% endif %}
+
+    $.ajax({
+        type: "POST",
+        url:url,
+        dataType: "json",
+        data:data,
+        success: function(data){
+            if (data.status) {
+                //window.location= "/admin/edit" + item  + "/" + data.data;
+            }else{
+                alert(data.errmsg);
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

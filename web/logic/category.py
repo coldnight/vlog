@@ -70,6 +70,9 @@ class CategoryLogic(Logic):
         self.ptc = post_to_category()
 
     def add_category(self, name):
+        nostr = [' ', '+', '&', '#', '/', '?', '%', '=']
+        if [n for n  in nostr if n in name]:
+            return self.error(u"不允许的特殊字符")
         if not name:
             return self.error(u"需给出类别名")
         ex = self.check_exists(name)

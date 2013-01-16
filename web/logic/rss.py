@@ -7,7 +7,7 @@
 #   Desc    :   RSS输出
 #
 import os
-import urllib
+from urllib import quote
 
 from config import TEMPLATE_PATH, STATIC_PATH
 from core.web import BaseHandler
@@ -19,6 +19,7 @@ timeformat = "%a, %d %b %Y %H:%M:%S +0000"
 def handle_rss(logic, request):
     posts = logic.post.get_posts().get("data")
     for p in posts:
+        p["link_title"] = quote(p.get("link_title").encode("utf-8"))
         p['rss_date'] = p.get('date').strftime(timeformat)
 
     template_path = 'rss.jinja'

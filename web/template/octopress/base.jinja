@@ -79,7 +79,7 @@
     <ul role=main-navigation>
       <li><a href="/">Blog</a></li>
       {% for p in page %}
-      <li><a href="/page/{{p.id}}">{{p.title}}</a></li>
+      <li><a href="/page/{{p.link_title}}/">{{p.title}}</a></li>
       {% endfor %}
     </ul>
   </nav>
