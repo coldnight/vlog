@@ -62,6 +62,7 @@ settings = {
     "login_url": "/login",
     "xsrf_cookies": False,
     "debug": DEBUG,
+    "gzip":True,
 }
 
 
