@@ -146,6 +146,7 @@ class PostLogic(Logic):
         return self.get_post_by_ids(pids, index, size)
 
     def post(self, post_dict):
+        post_dict['isdraft'] = 0
         tags = post_dict.pop('tags', None)
         category = post_dict.pop('category', None)
         fields = []

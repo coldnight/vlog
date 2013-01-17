@@ -148,6 +148,32 @@ class EditPost(AdminHandler):
         self.handle_rss()
         self.write(r)
 
+class LinksHandler(AdminHandler):
+    def get(self):
+        _id = self.get_argument("id", None)
+        link = None
+        title = u"链接表"
+        if _id:
+            link = Logic.link.get_link_by_id(_id)
+            title = u"编辑链接 | {0}".format(link.get("text"))
+        links = Logic.link.get_all_links()
+
+        self.render("admin_link.jinja", links = links, link = link, title=title)
+
+    def post(self):
+        text = self.get_argument("text")
+        url = self.get_argument("url")
+        order = self.get_argument("order")
+        act = self.get_argument("act")
+        if act == "add":
+            lid = Logic.link.add_new_link(text, url, order)
+        if act == "edit":
+            lid = self.get_argument("id")
+            Logic.link.update_link_edit(lid,
+                                        {"text":text, "url":url, "order":order})
+
+        self.redirect("/admin/links?id={0}".format(lid))
+
 class RemoveHandler(AdminHandler):
     _url = r"/admin/del/(\w+)/(\d+)/?"
     def get(self, item, _id):
@@ -158,6 +184,10 @@ class RemoveHandler(AdminHandler):
         if item == "comment":
             Logic.comment.remove_comment(_id)
             redirect = self.request.headers.get("Referer")
+
+        if item == "link":
+            Logic.link.del_link_by_id(_id)
+            redirect = "/admin/links"
 
         self.handle_sitemap()
         self.handle_rss()

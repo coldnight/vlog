@@ -6,7 +6,8 @@
 #   Date    :   13/01/16 11:59:24
 #   Desc    :   更新逻辑
 #
-from config import __version__
+from core.util import get_version
+from mycnf import MYSQL_PRE
 from core.util import get_logger
 from .post import PostLogic
 from .category import CategoryLogic
@@ -18,22 +19,43 @@ class UpdateLogic(object):
     cl = CategoryLogic()
     pal = PageLogic()
     option = GlobalOption()
-    __version__ = float(''.join([str(v) for v in __version__]))
+    __version__ = get_version()
 
     def __init__(self):
         self.logger = get_logger()
         version = self.option.version
         version = float(version) if version else 0
         if version < self.__version__:
-            self.update()
+            self.update(version)
             self.option.version = self.__version__
 
-    def update(self):
-        self.logger.info("UPDATE to version %s",
-                         '.'.join([str(v) for v in __version__]))
-        self.update_table()
-        self.update_post()
-        self.update_page()
+    def update(self, version):
+        self.logger.info("UPDATE to version %f", self.__version__)
+        if version < 0.10:
+            self.update_table()
+            self.update_post()
+            self.update_page()
+
+        if version < 0.11:
+            self.update_links_table()
+
+        if version < 0.12:
+            self.update_post_index()
+
+    def update_post_index(self):
+        sql = "create index link_title on {0}(`link_title`)".format(
+            self.pl.get_table())
+        self.pl.execute_sql(sql, commit = True)
+
+    def update_links_table(self):
+        table_sql = """create table if not exists `{0}links`(
+            id INT AUTO_INCREMENT NOT NULL,
+            `text` VARCHAR(255) NOT NULL,
+            `url` VARCHAR(255) NOT NULL,
+            `order` TINYINT NOT NULL default 0,
+            date TIMESTAMP NOT NULL,
+            PRIMARY KEY(`id`))character set utf8""".format(MYSQL_PRE)
+        self.pl.execute_sql(table_sql, commit = True)
 
     def update_table(self):
         table = self.pl.get_table()

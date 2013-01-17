@@ -8,28 +8,29 @@
 #
 from core.logic import Logic
 
-#TODO
-class Links(Logic):
-    def get_all_links(self, limit = LINK_NUM):
-        sdb._ensure_connected()
-        return sdb.query('SELECT * FROM `sp_links` ORDER BY `displayorder` DESC LIMIT %s' % str(limit))
+class LinksLogic(Logic):
+    def get_all_links(self):
+        with self._mc() as op:
+            order = {"order":-1}
+            return op.select(order = order)
 
-    def add_new_link(self, params):
-        query = "INSERT INTO `sp_links` (`displayorder`,`name`,`url`) values(%s,%s,%s)"
-        mdb._ensure_connected()
-        return mdb.execute(query, params['displayorder'], params['name'], params['url'])
+    def add_new_link(self, text, url, order):
+        fields = ['text', 'url', 'order']
+        values = [text, url, order]
+        with self._mc() as op:
+            return op.insert(fields, values)
 
-    def update_link_edit(self, params):
-        query = "UPDATE `sp_links` SET `displayorder` = %s, `name` = %s, `url` = %s WHERE `id` = %s LIMIT 1"
-        mdb._ensure_connected()
-        mdb.execute(query, params['displayorder'], params['name'], params['url'], params['id'])
+    def update_link_edit(self, lid, set_dict):
+        with self._mc() as op:
+            where = "`id`='{0}'".format(op.escape(lid))
+            return op.update(set_dict, where = where)
 
-    def del_link_by_id(self, id):
-        mdb._ensure_connected()
-        mdb.execute("DELETE FROM `sp_links` WHERE `id` = %s LIMIT 1", id)
+    def del_link_by_id(self, _id):
+        with self._mc() as op:
+            where = "`id`='{0}'".format(op.escape(_id))
+            return op.remove(where = where)
 
-    def get_link_by_id(self, id):
-        sdb._ensure_connected()
-        return sdb.get('SELECT * FROM `sp_links` WHERE `id` = %s LIMIT 1' % str(id))
-
-
+    def get_link_by_id(self, _id):
+        with self._mc() as op:
+            where = "`id`='{0}'".format(op.escape(_id))
+            return op.select_one(where = where)

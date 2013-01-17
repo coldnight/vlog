@@ -8,7 +8,8 @@
 #
 import os
 import MySQLdb as mysqldb
-from config import ROOT_PATH, __version__
+from config import ROOT_PATH
+from core.util import get_version
 
 sql = """
 use `{0}`;
@@ -66,7 +67,7 @@ create table if not exists `{1}post`(
     enabled TINYINT(1) NOT NULL DEFAULT 1,
     `type` TINYINT(1) NOT NULL DEFAULT 1,  -- 1:post 2:page
     PRIMARY KEY(id),
-    INDEX(`title`)
+    INDEX(`link_title`)
     )character set utf8;
 
 drop table if exists `{1}post_to_tag`;
@@ -123,6 +124,16 @@ create table if not exists `{1}comment` (
     PRIMARY KEY(`id`),
     INDEX(`pid`)
 )character set utf8;
+
+drop table if exists `{1}links`;
+create table if not exists `{1}links`(
+    id INT AUTO_INCREMENT NOT NULL,
+    `text` VARCHAR(255) NOT NULL,
+    `url` VARCHAR(255) NOT NULL,
+    `order` TINYINT NOT NULL default 0,
+    date TIMESTAMP NOT NULL,
+    PRIMARY KEY(`id`)
+)character set utf8;
 """
 
 def install(mysql_host, mysql_port, mysql_user, mysql_pwd,
@@ -131,8 +142,7 @@ def install(mysql_host, mysql_port, mysql_user, mysql_pwd,
     try:
         conn = mysqldb.Connection(host = mysql_host, port = int(mysql_port),
                                   user = mysql_user, passwd = mysql_pwd)
-        sql = sql.format(mysql_name, mysql_prev,
-                         float('0'.join([str(v) for v in __version__])))
+        sql = sql.format(mysql_name, mysql_prev, get_version())
         cursor = conn.cursor()
         for s in sql.split(';'):
             if not s.strip(): continue

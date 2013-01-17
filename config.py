@@ -38,4 +38,4 @@ EMAIL_ACCOUNT = "blog.linuxzen@gmail.com"
 
 EMAIL_PASSWORD = ""
 
-__version__ = (0, 1, 0)
+__version__ = (0, 1, 2)

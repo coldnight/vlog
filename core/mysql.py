@@ -95,14 +95,14 @@ class DatabaseOp(object):
             sf = str(self.fields)                   # 创建sql语句使用
         else:
             sf = '`{0}`'.format('`,`'.join(fields))
-        sql = 'select {0} from {1} '.format(sf, self.table)
+        sql = 'select {0} from `{1}` '.format(sf, self.table)
         if where:
             sql += 'where {0}'.format(where)
         if order and isinstance(order, (dict, tuple)):
             if isinstance(order, dict):
                 order = order.items()[0]
             orderby = ' DESC' if order[1] == -1 else 'ESC'
-            sql += ' order by {0} {1} '.format(order[0], orderby)
+            sql += ' order by `{0}` {1} '.format(order[0], orderby)
         if limit:
             if isinstance(limit, int):
                 sql += ' limit {0} '.format(limit)

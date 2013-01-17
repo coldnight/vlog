@@ -132,6 +132,7 @@ class WebHandler(BaseHandler):
         kwargs['categories'] = categories.get('data')
         kwargs['SITE_TITLE'] = self.option.site_title
         kwargs['SITE_SUB_TITLE'] = self.option.sub_title
+        kwargs["links"] = Logic.link.get_all_links()
         if not kwargs.has_key("description"):
             kwargs['description'] = self.option.description
         if not kwargs.has_key("keywords"):
@@ -264,6 +265,15 @@ class DateHandler(WebHandler):
         self.render("index.jinja", posts = posts, pageinfo = pageinfo,
                     title = u"{0}年 {1} 月".format(year, month),
                     base_path = "/date/{0}/{1}/".format(year, month))
+
+
+class VlAjaxHandler(WebHandler):
+    _url = r"/vl-ajax"
+    def post(self):
+        action = self.get_argument("action")
+        if action == "add_post_view":
+            pid = self.get_argument("pid")
+            Logic.post.add_post_view(pid)
 
 class FeedHandler(StaticFileHandler):
     def initialize(self):

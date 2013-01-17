@@ -17,7 +17,7 @@ from email.mime.text import MIMEText
 
 from datetime import datetime
 
-from config import DEBUG, LOG_PATH, EMAIL_ACCOUNT, EMAIL_PASSWORD
+from config import DEBUG, LOG_PATH, EMAIL_ACCOUNT, EMAIL_PASSWORD, __version__
 
 encrypt_md5 = lambda s: hashlib.md5(s + '3d2535f2ecf1dd3b7b').hexdigest()
 md5 = lambda s: hashlib.md5(s).hexdigest()
@@ -148,3 +148,8 @@ def send_mail(to_list, sub, content):
     target = _send_mail
     t = threading.Thread(target = target, args = (to_list, sub, content))
     t.start()
+
+
+def get_version():
+    return float(str(__version__[0]) + '.' + str(__version__[1]) + \
+                        str(__version__[2]))

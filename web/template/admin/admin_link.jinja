@@ -1,0 +1,32 @@
+{% extends "base.jinja" %}
+{% block content %}
+<h2>{{title}}</h2>
+
+<form action="" method="post">
+<p>
+{% if link %}
+显示文本: <input type="text" name="text" value="{{link.text}}" size="22" tabindex="1" />
+排序: <input type="text" name="order" value="{{link.order}}" size="10" tabindex="2" /><br />
+链接: <input type="text" name="url" value="{{link.url}}" size="46" tabindex="3" /> 
+<input type='hidden' value='edit' name='act' />
+<input type='hidden' value='{{link.id}}' name='id' />
+{% else %}
+显示文本: <input type="text" name="text" value="" size="22" tabindex="1" />
+排序: <input type="text" name="order" value="0" size="10" tabindex="2" /><br />
+链接: <input type="text" name="url" value="" size="46" tabindex="3" /> 
+<input type='hidden' value='add' name='act' />
+{% endif %}
+<input type="submit" class="bigbtn" tabindex="4" value=" Submit " /></p>
+</form>
+<br />
+<h2>友情链接列表</h2>
+<ul>
+    {% for l in links %}
+    <li> 
+    <a href="{{l.url}}" title="Link to {{l.url}}" target="_blank">{{l.text}}</a> 
+    ( <a href="/admin/links?id={{l.id}}">Edit</a> | 
+    <a href="/admin/del/link/{{l.id}}/">Delete</a> )
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

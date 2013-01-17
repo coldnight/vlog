@@ -15,6 +15,7 @@ from .options import GlobalOption, Options
 from .user import UserLogic
 from .upload import UploadLogic
 from .update import UpdateLogic
+from .link import LinksLogic
 
 class Logic(object):
     """ 使用类属性实例化各个逻辑类 """
@@ -28,3 +29,4 @@ class Logic(object):
     option = GlobalOption()
     upload = UploadLogic()
     Options = Options
+    link = LinksLogic()
