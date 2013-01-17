@@ -66,7 +66,7 @@
     <h1>链接表</h1>
     <ul id="Category_list">
     {% for link in links %}
-        <li class="category"><a href="{{ link.url }}" target="_blank">{{ link['text'] }}</a></li>
+        <li class="category"><a title="{{link.text}}" href="{{ link.url }}" target="_blank">{{ link['text'] }}</a></li>
     {% endfor %}
     </ul>
 </section>
