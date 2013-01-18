@@ -73,6 +73,7 @@ class PostLogic(Logic):
         """ 根据id获取文章标题或者后去最新10篇文章的标题 """
         with self._mc() as op:
             if ids:
+                ids = list(set(ids))
                 wids = "','".join(op.escape(ids))
                 where = "`id` in ('{0}')".format(wids)
                 posts = op.select(where = where)
@@ -81,8 +82,12 @@ class PostLogic(Logic):
                 limit = self.handle_limit(size = size)
                 order = {"id":-1}
                 posts = op.select(where = where, order = order, limit = limit )
-        result = {}
-        [result.update({p.get('id'):p.get('title')}) for p in posts]
+
+        result = {p.get("id") : {"title":p.get("title"),
+                                "link_title":p.get("link_title"),
+                                 "date":p.get("date")} for p in posts}
+
+        print result
         return result
 
     def get_new(self, size = 5):

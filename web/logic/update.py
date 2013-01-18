@@ -13,12 +13,14 @@ from .post import PostLogic
 from .category import CategoryLogic
 from .options import GlobalOption
 from .page import PageLogic
+from .comment import CommentLogic
 
 class UpdateLogic(object):
     pl = PostLogic()
     cl = CategoryLogic()
     pal = PageLogic()
     option = GlobalOption()
+    col = CommentLogic(pl)
     __version__ = get_version()
 
     def __init__(self):
@@ -41,6 +43,14 @@ class UpdateLogic(object):
 
         if version < 0.12:
             self.update_post_index()
+
+        if version < 0.13:
+            self.update_comment_table()
+
+    def update_comment_table(self):
+        t = self.col.get_table()
+        sql = "alter table {0} add `type` TINYINT NOT NULL default 0;".format(t)
+        self.col.execute_sql(sql, True)
 
     def update_post_index(self):
         sql = "create index link_title on {0}(`link_title`)".format(

@@ -1,0 +1,35 @@
+.gravatar {
+    float:left;
+    height: 68px;
+    width: 68px;
+    font-size: 11px;
+    text-align: center;
+}
+
+.sub_footer{
+    float:right;
+    font-size: 13px;
+    vertical-align:baseline;
+}
+
+
+.footer{
+    font-size: 13px;
+    vertical-align:baseline;
+    overflow:auto;
+    color: #93A1A1;
+    margin-left:72px;
+}
+
+.footer a{
+    float:right;
+    padding: 2px;
+}
+.code {
+    width:200px;
+    color:black;
+    margin:0;
+    white-space:normal;
+    word-break: break-all;
+    overflow:hidden;
+}

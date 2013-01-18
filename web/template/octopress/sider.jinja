@@ -6,7 +6,8 @@
     {% for each in comments %}
         <li class="post">
             <span class="grey">{{each.date}}</span> {{each.name}} Says: <br/>
-            <a href="/post/{{each.pid}}#{{each.id}}">{{each.short_content}} </a>
+            <a
+            href="/{{each.post_date.year}}/{{each.post_date.month}}/{{each.post_date.day}}/{{each.link_title}}/#{{each.id}}">{{each.short_content}} </a>
         </li>
     {% endfor %}
     </ul>

@@ -6,7 +6,7 @@ PORT = 18888
 
 DEBUG = True
 
-CACHED = True
+CACHED = False
 
 CACHE_HOST = ["localhost:11211"]
 
@@ -38,4 +38,4 @@ EMAIL_ACCOUNT = "blog.linuxzen@gmail.com"
 
 EMAIL_PASSWORD = ""
 
-__version__ = (0, 1, 2)
+__version__ = (0, 1, 3)

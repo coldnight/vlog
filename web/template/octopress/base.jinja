@@ -27,6 +27,8 @@
   <link rel='index' title='{{SITE_TITLE}}' href='/' />
   <meta name="description" content="{{description|escape}}" />
   <meta name="keywords" content="{{keywords}}" />
+  {% block head %}
+  {% endblock %}
 
 <script type="text/javascript">
     $(function(){
@@ -78,6 +80,7 @@
     </form>
     <ul role=main-navigation>
       <li><a href="/">Blog</a></li>
+      <li><a href="/notes/">便签</a></li>
       {% for p in page %}
       <li><a href="/page/{{p.link_title}}/">{{p.title}}</a></li>
       {% endfor %}
@@ -100,26 +103,30 @@
         
     </div>
   </div>
-  <footer>
+  <footer style="text-align:center;">
     <p>
-    &copy; 2013 Copyright <a href="http://www.linuxzen.com">cold</a> - 
-    Powered by Tornado MySQL
+    &copy; 2013 cold<br />
     Time: <span id="requesttime">{{ request.request_time()}}</span> ms -
     <a href="/admin/" rel="nofollow">Admin</a>
-    <script src="http://s96.cnzz.com/stat.php?id=3767683&web_id=3767683&show=pic" language="JavaScript"></script>
     <br />
-        <span id="license">
+    <span style="display:inline;vertical-align:middle;overflow:auto;height:40px;">
+        由
+        <img alt="Python" title="Python" class="fimg" src="/static/img/python-logo.gif" />
+        <img alt="MySQL" title="MySQL" class="fimg" src="/static/img/mysql.png" />
+        <img alt="nginx" title="nginx" class="fimg" src="/static/img/nginx.gif" />
+        <img alt="Memcached" title="memcached" class="fimg" src="/static/img/memcached_logo.png" />
+        <img alt="tornado" title="tornado" class="fimg" src="/static/img/tornado.png" />
+        <img alt="Jinja2" title="Jinja2" class="fimg" src="/static/img/jinja-small.png" />
+        强力驱动
+    </span>
+    <br />
+    <span id="license">
 <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/"><img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-sa/3.0/cn/88x31.png" /></a>本站所有作品均采用<a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/">知识共享署名-相同方式共享 3.0 中国大陆许可协议</a>进行许可。
-        </span>
+    </span>
+    <br />
+    <script src="http://s96.cnzz.com/stat.php?id=3767683&web_id=3767683&show=pic" language="JavaScript"></script>
     </p>
     <a style="display: none; " rel="nofollow" href="#top" id="go-to-top">▲</a>
   </footer>
 
-<link rel="stylesheet" title="Sunburst" href="/static/highlight/sunburst.min.css">
-<script src="/static/highlight/highlight.min.js"></script>
-<script>
-  hljs.tabReplace = '    ';
-  hljs.initHighlightingOnLoad();
-</script>
-</body>
 </html>

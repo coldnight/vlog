@@ -16,6 +16,7 @@ from .user import UserLogic
 from .upload import UploadLogic
 from .update import UpdateLogic
 from .link import LinksLogic
+from .notes import NotesLogic
 
 class Logic(object):
     """ 使用类属性实例化各个逻辑类 """
@@ -30,3 +31,4 @@ class Logic(object):
     upload = UploadLogic()
     Options = Options
     link = LinksLogic()
+    note = NotesLogic()

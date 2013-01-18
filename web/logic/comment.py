@@ -84,7 +84,9 @@ class CommentLogic(Logic):
             count = self.count_post_comments(pid)
             pageinfo = self.handle_page(count, index, size)
             r = op.select(where = where, order = order, limit = limit)
-            r = self.insert_info(r)
+        titles = self.pl.get_titles([pid])
+        r = self._insert_post_title(r, titles)
+        r = self.insert_info(r)
         return self.success(r, pageinfo)
 
     def insert_info(self, comments):
@@ -103,7 +105,11 @@ class CommentLogic(Logic):
 
     def _insert_post_title(self, comments, titles):
         for comment in comments:
-            comment['post_title'] = titles.get(comment.get("pid"))
+            post = titles.get(comment.get("pid"), {})
+            print comment.get("pid")
+            comment['post_title'] = post.get("title")
+            comment['link_title'] = post.get("link_title")
+            comment['post_date'] = post.get("date")
 
         return comments
 
@@ -112,14 +118,14 @@ class CommentLogic(Logic):
             where = "`id`='{0}'".format(op.escape(cid))
             op.remove(where = where)
 
-    def get_last_comments(self, postlogic, size = 5):
+    def get_last_comments(self,  size = 5):
         with self._mc() as op:
             where ="`allowed`='1'"
             order = {"id":-1}
             limit = self.handle_limit(size = size)
             r = op.select(where = where, order = order, limit = limit)
         pids = [c.get('pid') for c in r]
-        titles = postlogic.get_titles(pids)
+        titles = self.pl.get_titles(pids)
         comments = self._insert_post_title(r, titles)
         comments = self.insert_info(comments)
         return comments

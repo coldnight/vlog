@@ -13,6 +13,7 @@ from tornado.web import StaticFileHandler
 
 from config import STATIC_PATH as STATIC_ROOT, UPLOAD_PATH, THEME, DEBUG
 from core.web import BaseHandler
+from core.util import md5
 
 from web.logic import Logic
 from web.logic.install import install
@@ -125,7 +126,7 @@ class WebHandler(BaseHandler):
         tags = Logic.tag.get_tags()
         categories = Logic.category.get_categories()
         pl = Logic.post
-        kwargs['comments'] = Logic.comment.get_last_comments(pl)
+        kwargs['comments'] = Logic.comment.get_last_comments()
         kwargs['tags'] = tags.get('data')
         kwargs['new'] = pl.get_new()
         kwargs['months'] = pl.get_months()
@@ -266,6 +267,20 @@ class DateHandler(WebHandler):
                     title = u"{0}年 {1} 月".format(year, month),
                     base_path = "/date/{0}/{1}/".format(year, month))
 
+class NotesHandler(WebHandler):
+    _url = r"/notes/(?:p)*/?(\d*)/?"
+    def get(self, index):
+        index = index if index else 1
+        data = Logic.note.get_notes(index)
+        notes = data.get("data")
+        pageinfo = data.get("pageinfo")
+        gravatar = None
+        if self.uid and self.username:
+            admin = Logic.user.check_has_admin().get("email")
+            gravatar = md5(admin)
+        self.render("notes.jinja", notes = notes, title = u"便利贴",
+                    gravatar = gravatar, pageinfo = pageinfo,
+                    basepath = r'/notes/p/')
 
 class VlAjaxHandler(WebHandler):
     _url = r"/vl-ajax"

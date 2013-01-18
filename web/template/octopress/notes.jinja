@@ -1,0 +1,60 @@
+{% extends "base.jinja" %}
+{% block head %}
+  <link href="/static/css/notes.css" media="screen, projection" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block content %}
+<div class="blog-index">
+{% if uid and username %}
+<article>
+        <div class="entry-content" id="postcondiv">
+            <img
+            src="http://www.gravatar.com/avatar/{{gravatar}}?s=68&d=monsterid" class='avatar gravatar' />
+            <pre><textarea id="note_content" style="height:90px; width:700px;"></textarea>
+            <span class="sub_footer">
+            <span id="num">0</span>/200 <button id="submit">发表</button>
+            </span></pre>
+        </div>
+<script type="text/javascript" src="/static/js/notes.js"></script>
+</article>
+{% endif %}
+{% if notes %}
+{% for note in notes %}
+<article>
+        <div class="entry-content" id="postcondiv">
+        <div class="gravatar">
+            <img style="margin:0 auto 0;" src="http://www.gravatar.com/avatar/{{ note.gravatar }}?s=48&d=monsterid" class='avatar'/>
+            {{ note.name}}
+        </div>
+            <pre style="margin-bottom:2px;height:80px;"><code class="code">{{note.content}}</code></pre>
+            <span class="footer">{{ note.date }}<!--<a class="reply" nid="{{note.id}}">回复</a>-->
+            {% if uid and username %}
+            <a href="/admin/del/note/{{note.id}}/">删除</a>
+            {% endif %}</span>
+        </div>
+</article>
+{% endfor %}
+{% else %}
+<article>
+        <div class="entry-content" id="postcondiv">
+            <pre>还没有任何便签</pre>
+        </div>
+</article>
+
+{% endif %}
+{% if pageinfo %}
+{% if pageinfo.totalpage > 0 %}
+   <nav role="pagination">
+       <div>
+       {% if pageinfo.pageindex > 1 %}
+        <a class="prev" href="{{base_path}}{{ pageinfo.prevpage }}">&larr; Prev</a>
+        {% endif %}
+         &nbsp;
+         {% if pageinfo.pageindex < pageinfo.totalpage %}
+        <a class="next" href="{{base_path}}{{ pageinfo.nextpage }}">Next &rarr;</a>
+        {% endif %}
+       </div>
+   </nav>
+{% endif %}
+{% endif %}
+</div>
+{% endblock %}

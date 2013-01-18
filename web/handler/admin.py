@@ -107,14 +107,11 @@ class EditPage(AdminHandler):
 
     def post(self, pid):
         title = self.get_argument('title')
-        link_title = self.get_argument("link_title", None)
         source = self.get_argument("source")
         content = self.get_argument('content')
         pid = self.get_argument("id")
         page_dict = {"title":title, "content":content, "source":source,
                      "author":self.uid}
-        if link_title:
-            page_dict['link_title'] =  link_title
         r = Logic.page.edit_page(pid, page_dict)
         self.handle_sitemap()
         self.handle_rss()
@@ -133,7 +130,6 @@ class EditPost(AdminHandler):
 
     def post(self, pid):
         title = self.get_argument('title')
-        link_title = self.get_argument("link_title", None)
         source = self.get_argument("source")
         content = self.get_argument('content')
         tags = self.get_argument('tags')
@@ -141,8 +137,6 @@ class EditPost(AdminHandler):
         pid = self.get_argument("id")
         post_dict = {"title":title, "content":content, "source":source,
                      "category":category, "tags":tags}
-        if link_title:
-            post_dict['link_title'] =  link_title
         r = Logic.post.edit(pid, post_dict)
         self.handle_sitemap()
         self.handle_rss()
@@ -174,6 +168,28 @@ class LinksHandler(AdminHandler):
 
         self.redirect("/admin/links?id={0}".format(lid))
 
+class AddNoteHandler(AdminHandler):
+    def post(self):
+        content = self.get_argument("content")
+        email = self.get_argument("email", None)
+        url = self.get_argument("url", None)
+        name = self.get_argument("name", None)
+        if not name or not email:
+            user = Logic.user.check_has_admin()
+            if not name:
+                name = user.get("name")
+            if not email:
+                email = user.get("email")
+
+        if not url:
+            url = "http://{0}".format(self.request.host)
+
+        note_dict = {"content":content, "email":email, "url":url, "name":name}
+        Logic.note.add_note(note_dict)
+        self.write({"status":True})
+
+
+
 class RemoveHandler(AdminHandler):
     _url = r"/admin/del/(\w+)/(\d+)/?"
     def get(self, item, _id):
@@ -188,6 +204,10 @@ class RemoveHandler(AdminHandler):
         if item == "link":
             Logic.link.del_link_by_id(_id)
             redirect = "/admin/links"
+
+        if item == "note":
+            Logic.note.remove_comment(_id)
+            redirect = "/notes/"
 
         self.handle_sitemap()
         self.handle_rss()
