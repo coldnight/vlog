@@ -106,7 +106,6 @@ class CommentLogic(Logic):
     def _insert_post_title(self, comments, titles):
         for comment in comments:
             post = titles.get(comment.get("pid"), {})
-            print comment.get("pid")
             comment['post_title'] = post.get("title")
             comment['link_title'] = post.get("link_title")
             comment['post_date'] = post.get("date")

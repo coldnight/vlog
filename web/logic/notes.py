@@ -31,6 +31,7 @@ class NotesLogic(CommentLogic):
             where = "`type`='1'"
             notes = op.select(where = where, limit = limit, order = order)
             total = op.count(where = where)
+        notes = self.insert_info(notes)
         pageinfo = self.handle_page(total, index, size)
         return self.success(notes, pageinfo)
 
