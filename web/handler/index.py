@@ -278,7 +278,7 @@ class NotesHandler(WebHandler):
         if self.uid and self.username:
             admin = Logic.user.check_has_admin().get("email")
             gravatar = md5(admin)
-        self.render("notes.jinja", notes = notes, title = u"便利贴",
+        self.render("notes.jinja", notes = notes, title = u"便签",
                     gravatar = gravatar, pageinfo = pageinfo,
                     basepath = r'/notes/p/')
 
