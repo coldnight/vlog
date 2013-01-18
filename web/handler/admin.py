@@ -43,7 +43,7 @@ class Login(AdminHandler):
     def post(self):
         username = self.get_argument("name")
         password = self.get_argument("password")
-        user_info = Logic.user.login(username, password)
+        user_info = Logic.user.admin_login(username, password)
         if user_info.get("status"):
             user = user_info.get("data")
             self.login(user.get("username"), user.get("id"))
@@ -167,6 +167,41 @@ class LinksHandler(AdminHandler):
                                         {"text":text, "url":url, "order":order})
 
         self.redirect("/admin/links?id={0}".format(lid))
+
+class UserHandler(AdminHandler):
+    def get(self):
+        _id = self.get_argument("uid", None)
+        user = None
+        title = u"用户管理"
+        if _id:
+            user = Logic.user.get_user_by_id(_id)
+        users = Logic.user.get_all_user()
+
+        self.render("admin_user.jinja", user = user, users = users, title=title)
+
+    def post(self):
+        username = self.get_argument("username", None)
+        email = self.get_argument("email", None)
+        name = self.get_argument("name", None)
+        url = self.get_argument("url", None)
+        pwd = self.get_argument("pwd", None)
+        pwd2 = self.get_argument('pwd2', None)
+        _id = self.get_argument("uid", None)
+        action = self.get_argument("act")
+        if action == "add":
+            if not (username and email and pwd and pwd2):
+                return self.write({"status":False, 'errmsg':u"必填"})
+            if pwd != pwd2:
+                return self.write({"status":False, "errmsg":u"两次密码不一致"})
+            user_dict = {"username":username, "password":pwd,
+                         "email":email, "name":name}
+            url and user_dict.update({"url":url})
+            r = Logic.user.add_user(user_dict)
+            if r.get("status"):
+                self.redirect("/admin/user?uid={0}".format(r.get("data")))
+            self.write(r)
+        #TODO
+        if action == "edit":pass
 
 class AddNoteHandler(AdminHandler):
     def post(self):

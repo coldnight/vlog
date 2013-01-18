@@ -38,17 +38,31 @@ class UserLogic(Logic):
             where = "`role`='0'"
             return op.select_one(where=where)
 
-    def login(self, username, password):
+    def admin_login(self, username, password):
         admin = self.check_has_admin()
         if not (username and password):
-            return self.error("请使用用户名密码登录")
+            return self.error(u"请使用用户名密码登录")
         if username == admin.get('username') and \
            encrypt_md5(password) == admin.get('password'):
             return self.success(admin)
         else:
-            return self.error("登录失败")
+            return self.error(u"登录失败")
+
+    def login(self, username, password):
+        """"""
+        with self._mc() as op:
+            where = "`username`='{0}' and `password`='{1}'".format(
+                username, encrypt_md5(password))
+
+            result = op.select_one(where = where)
+
+        if result:
+            return self.success(result)
+        return self.error(u"登录失败")
+
 
     def update(self, uid, user_dict):
+        user_dict.drop("role", None)       #  不允许更改角色
         with self._mc() as op:
             where = "`id`='{0}'".format(op.escape(uid))
             return op.update(user_dict, where)
@@ -71,12 +85,37 @@ class UserLogic(Logic):
             where = "`name`='{0}'".format(op.escape(name))
             return op.select_one(where = where)
 
-    def add_new_user(self, name, pw):
-        if name and pw:
-            fields = ['name', 'password']
-            values = [name, encrypt_md5(pw)]
-            with self._mc() as op:
-                return op.insert(fields, values)
+    def add_user(self, user_dict):
+        user_dict['role'] = 1
+        user_dict['password'] = encrypt_md5(user_dict.get("password"))
+        username = user_dict.get("username")
+        if self.check_exists_username(username):
+            return self.error(u"用户名已存在")
+        email = user_dict.get("email")
+        if self.check_exists_email(email):
+            return self.error(u"邮箱已注册")
+        name = user_dict.get("name")
+        if self.check_exists_name(name):
+            return self.error(u"显示名已存在")
+
+        fields, values = self.handle_insert(user_dict)
+        with self._mc() as op:
+            return self.success(op.insert(fields, values))
+
+    def check_exists_username(self, username):
+        with self._mc() as op:
+            where = "`username`='{0}'".format(op.escape(username))
+            return op.select_one(where = where)
+
+    def check_exists_name(self, name):
+        with self._mc() as op:
+            where = "`name`='{0}'".format(op.escape(name))
+            return op.select_one(where = where)
+
+    def check_exists_email(self, email):
+        with self._mc() as op:
+            where = "`email`='{0}'".format(op.escape(email))
+            return op.select_one(where = where)
 
     def check_user(self, name, pw):
         if not name or pw:

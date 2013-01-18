@@ -1,0 +1,36 @@
+
+{% extends "base.jinja" %}
+{% block content %}
+<h2>{{title}}</h2>
+
+<form action="" method="post">
+<p>
+{% if user %}
+用户名: {{ user.username }}
+显示名: <input type="text" name="name" value="{{user.name}}" size="22" tabindex="1" />
+链接: <input type="text" name="url" value="{{user.url}}" size="46" tabindex="3" /> 
+<input type='hidden' value='edit' name='act' />
+<input type='hidden' value='{{user.id}}' name='uid' />
+{% else %}
+用户名: <input type="text" name="username" value="" size="22" tabindex="1" />
+显示名: <input type="text" name="name" value="" size="22" tabindex="1" />
+邮箱: <input type="text" name="email" value="" size="22" tabindex="1" />
+密码: <input type="text" name="pwd" value="" size="22" tabindex="1" />
+重复密码: <input type="text" name="pwd2" value="" size="22" tabindex="1" />
+链接: <input type="text" name="url" value="" size="46" tabindex="3" /> 
+<input type='hidden' value='add' name='act' />
+{% endif %}
+<input type="submit" class="bigbtn" tabindex="4" value=" Submit " /></p>
+</form>
+<br />
+<h2>友情链接列表</h2>
+<ul>
+    {% for u in uses %}
+    <li> 
+    <a href="{{u.url}}" title="Link to {{u.url}}" target="_blank">{{u.name}}</a> 
+    ( <a href="/admin/user?uid={{u.id}}">Edit</a> | 
+    <a href="/admin/del/user/{{u.id}}/">Delete</a> )
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
