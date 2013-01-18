@@ -221,7 +221,7 @@ class CategoryHandler(WebHandler):
         posts = Logic.post.get_post_by_category(cid, int(index), self.pagesize)
         self.render("index.jinja", posts = posts.get("data"),
                     pageinfo = posts.get("pageinfo"), title = title,
-                    base_path = "/category/{0}/".format(cate))
+                    base_path = u"/category/{0}/".format(cate))
 
 class TagHandler(WebHandler):
     _url = r"/tag/(.+?)/(\d*)"
@@ -233,7 +233,7 @@ class TagHandler(WebHandler):
         posts = Logic.post.get_post_by_tag(tid, int(index), self.pagesize)
         self.render("index.jinja", posts = posts.get("data"),
                     pageinfo = posts.get("pageinfo"), title  = tag,
-                    base_path = "/tag/{0}/".format(tag))
+                    base_path = u"/tag/{0}/".format(tag))
 
 class PageHandler(WebHandler):
     #XXX 如不传(.+?)后面的/会传进一个很奇特的%字符导致解码失败
