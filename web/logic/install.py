@@ -115,7 +115,7 @@ create table if not exists `{1}comment` (
     `name` VARCHAR(100) NOT NULL,
     `email` VARCHAR(100) NOT NULL,
     `url` VARCHAR(100) NULL,
-    `content` VARCHAR(50) NOT NULL,
+    `content` VARCHAR(500) NOT NULL,
     `parent` INT NOT NULL default 0,
     `pid` INT NOT NULL default 0,
     `ip` VARCHAR(128) NULL,
