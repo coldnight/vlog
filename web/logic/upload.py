@@ -15,7 +15,7 @@ from .options import Options
 class UploadLogic(object):
     """ 文件上传逻辑 """
     root = UPLOAD_PATH
-    url_format = r"/upload/{0!r}"
+    url_format = r"/upload/{0}"
     option = Options("upload")
 
     def __init__(self):

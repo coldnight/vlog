@@ -19,7 +19,7 @@
     <label for="email">Website (Optional)</label>
     </p>
     {% endif %}
-    <p><label for="comment">* Your Message (required) 10~500s</label> </p>
+    <p><label for="comment">* Your Message (required)</label> </p>
     <textarea name="comment" id="commentbox" tabindex="4"></textarea> 
     <p>
     <input name="submit" class="submit" type="button" id="submit" tabindex="5" value="Submit Comment" /> 
@@ -57,20 +57,19 @@ $('#submit').click(function(){
         $('#email').focus();
         return;
     }
+
+    if (!con){
+        $("#commentbox").focus();
+        return;
+    }
     if(url.length>0){
         if(!testReg(urlreg,url)){
             $('#url').focus();
             return;
         }
     }
-    if(con.length< 10 || con.length > 500){
-        $('#commentbox').focus();
-        return;
-    }
-        
     $('#submit').attr('disabled', 'disabled');
     $('#text').html("Sending now.....");
-    
     $.cookie('author', author, { expires: 365, path: '/' });
     $.cookie('email', email, { expires: 365, path: '/' });
     $.cookie('url', url, { expires: 365, path: '/' });
@@ -80,6 +79,7 @@ $('#submit').click(function(){
     }
     $.ajax({
         type: 'POST',
+        async:false,
         url: '/post/{{post.id}}',
         dataType: "json",
         data: data,
