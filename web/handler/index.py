@@ -273,7 +273,7 @@ class PageHandler(WebHandler):
                     post_comments = post_comments)
 
 class DateHandler(WebHandler):
-    _url = r"/date/(\d+)/(\d+)/(\d*)"
+    _url = r"/date/(\d+)/(\d+)/?(\d*)"
     def get(self, year, month, index):
         index = index if index else 1
         data = Logic.post.get_by_month(year, month, index, self.pagesize)

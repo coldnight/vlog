@@ -49,7 +49,7 @@ def handle_sitemap(logic, request):
 
     months = logic.post.get_months()
     for m in months:
-        path = "/date/{0}/{1}".format(m.get('year'), m.get('month'))
+        path = "/date/{0}/{1}/".format(m.get('year'), m.get('month'))
         urls.append(make_url(path, now(), 'monthly', '0.2'))
 
     template_path = 'sitemap.jinja'
