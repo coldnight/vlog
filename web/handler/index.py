@@ -166,6 +166,11 @@ class WPHandler(WebHandler):
                                           pubdate.day, post.get("link_title"))
         self.redirect(url)
 
+class WPAboutHandler(WebHandler):
+    _url = r"/index\.php/about"
+    def get(self):
+        self.redirect("/page/About/")
+
 class PostHandler(WebHandler):
     _url = r"/post/(\d+)/?(\d*)"
     def get(self, pid, index):
