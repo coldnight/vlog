@@ -156,7 +156,7 @@ class IndexHandler(WebHandler):
                     base_path = "/")
 
 class WPHandler(WebHandler):
-    _url = r"/index\.php/archives/(\d+)"
+    _url = r"/index\.php/archives/(\d+)/?.*"
     def get(self, pid):
         post = Logic.post.get_post_by_id(pid).get("data")
         pubdate = post.get("pubdate")
