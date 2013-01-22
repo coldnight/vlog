@@ -10,7 +10,7 @@
        <p class="meta">
         <small>{{obj.date}} in 
         {% for cate in obj.category %}
-        <a href="/category/{{ cate.id }}/" rel="category tag">{{cate.name}}</a> &nbsp;
+        <a href="/category/{{ cate.name}}/" rel="category tag">{{cate.name}}</a> &nbsp;
         {% endfor %}
         <small> by <strong>{{ obj.author.name }}</strong></small>
         <a href="/post/{{ obj.id }}#comment" title="Comment on {{obj.title}}"
