@@ -25,7 +25,7 @@ class CommentLogic(Logic):
             where = "`id`='{0}'".format(op.escape(_id))
             return op.select_one(where = where)
 
-    def add_comment(self, pid, comment_dict, request):
+    def add_comment(self, pid, comment_dict, request = None):
         fields = []
         values = []
         comment_dict['pid'] = pid
@@ -34,8 +34,8 @@ class CommentLogic(Logic):
             values.append(comment_dict[k])
 
         with self._mc() as op:
-            op.insert(fields, values)
-
+            r = op.insert(fields, values)
+        if not request: return r
         post_title = self.pl.get_post_by_id(pid).get("data", {}).get("title")
         if comment_dict.has_key("parent"):
             parent = comment_dict.get("parent")
@@ -59,7 +59,7 @@ class CommentLogic(Logic):
             where = "`id`='{0}'".format(op.escape(cid))
             set_dict = {"allowed":1}
             r = op.update(set_dict, where)
-            if not pid:
+            if not pid or not request:
                 return r
         comm = self.get_comment_by_id(cid)
         email = comm.get("email")
@@ -108,7 +108,7 @@ class CommentLogic(Logic):
             post = titles.get(comment.get("pid"), {})
             comment['post_title'] = post.get("title")
             comment['link_title'] = post.get("link_title")
-            comment['post_date'] = post.get("date")
+            comment['post_date'] = post.get("pubdate")
 
         return comments
 

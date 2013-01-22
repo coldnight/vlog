@@ -4,7 +4,7 @@ import sys
 
 PORT = 18888
 
-DEBUG = True
+DEBUG = False
 
 CACHED = False
 
@@ -38,4 +38,4 @@ EMAIL_ACCOUNT = "blog.linuxzen@gmail.com"
 
 EMAIL_PASSWORD = ""
 
-__version__ = (0, 1, 3)
+__version__ = (0, 1, 4)

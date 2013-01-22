@@ -43,13 +43,13 @@ def load_apps():
                 if hasattr(cls, '_url'):
                     result.update({cls._url:cls})
                 else:
-                    key = '/{0}/{1}'.format(name.lower(),
-                                        n.lower().replace('handler', ''))
+                    key = '/{0}/{1}'.format(name.lower().replace("index",""),
+                                        n.lower().replace('handler', '')\
+                                            .replace("index", ""))
                     result.update({key: cls})
     tmp = dict()
     for key in result:
-        nkey = key.replace('index', '')
-        nkey = nkey.replace('//', '/')
+        nkey = key.replace('//', '/')
         if nkey == '': nkey = '/'
         tmp[nkey] = result[key]
         # tmp[key] = result[key]

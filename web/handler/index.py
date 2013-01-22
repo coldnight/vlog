@@ -155,6 +155,17 @@ class IndexHandler(WebHandler):
                     pageinfo=posts.get('pageinfo'),
                     base_path = "/")
 
+class WPHandler(WebHandler):
+    _url = r"/index\.php/archives/(\d+)"
+    def get(self, pid):
+        post = Logic.post.get_post_by_id(pid).get("data")
+        pubdate = post.get("pubdate")
+        if not post:
+            self.send_error(404, info = u"页面不存在")
+        url = u"/{0}/{1}/{2}/{3}/".format(pubdate.year, pubdate.month,
+                                          pubdate.day, post.get("link_title"))
+        self.redirect(url)
+
 class PostHandler(WebHandler):
     _url = r"/post/(\d+)/?(\d*)"
     def get(self, pid, index):

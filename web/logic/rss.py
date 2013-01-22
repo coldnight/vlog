@@ -20,7 +20,7 @@ def handle_rss(logic, request):
     posts = logic.post.get_posts().get("data")
     for p in posts:
         p["link_title"] = quote(p.get("link_title").encode("utf-8"))
-        p['rss_date'] = p.get('date').strftime(timeformat)
+        p['rss_date'] = p.get('pubdate').strftime(timeformat)
 
     template_path = 'rss.jinja'
     env = BaseHandler._path_to_evn.get(TEMPLATE_PATH)

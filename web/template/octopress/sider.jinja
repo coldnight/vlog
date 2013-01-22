@@ -19,7 +19,7 @@
     <ul id="new_posts">
     {% for n in new %}
         <li class="post">
-            <a href="/{{n.date.year}}/{{n.date.month}}/{{n.date.day}}/{{n.link_title}}/" alt="{{ n.title }}"> {{ n.title }}</a>
+            <a href="/{{n.pubdate.year}}/{{n.pubdate.month}}/{{n.pubdate.day}}/{{n.link_title}}/" alt="{{ n.title }}"> {{ n.title }}</a>
         </li>
     {% endfor %}
     </ul>

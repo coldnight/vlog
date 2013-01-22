@@ -85,7 +85,7 @@ class PostLogic(Logic):
 
         result = {p.get("id") : {"title":p.get("title"),
                                 "link_title":p.get("link_title"),
-                                 "date":p.get("date")} for p in posts}
+                                 "date":p.get("pubdate")} for p in posts}
 
         print result
         return result
@@ -103,7 +103,7 @@ class PostLogic(Logic):
             all_post = op.select()
         result = []
         for p in all_post:
-            date = p.get("date")
+            date = p.get("pubdate")
             year = date.year
             month = date.month
             dst = datetime.datetime(year, month, 1)
@@ -117,8 +117,8 @@ class PostLogic(Logic):
         year, month = int(year), int(month)
         nmonth, nyear = (month + 1, year) if month + 1 <= 12 else (1, year + 1)
         with self._mc() as op:
-            where = "`date` >= '{0}-{1}-1' and `type`='1' and enabled='1' and "\
-                    "`date` < '{2}-{3}-1'".format(year, month, nyear, nmonth)
+            where = "`pubdate` >= '{0}-{1}-1' and `type`='1' and enabled='1' and "\
+                    "`pubdate` < '{2}-{3}-1'".format(year, month, nyear, nmonth)
             order = {"id":-1}
             limit = self.handle_limit(index, size)
             posts = op.select(where = where, order = order, limit = limit)
@@ -156,7 +156,8 @@ class PostLogic(Logic):
         category = post_dict.pop('category', None)
         fields = []
         values = []
-        post_dict['update'] = NOW()
+        if not post_dict.has_key("pubdate"):
+            post_dict['pubdate'] = NOW()
         for p in post_dict:
             fields.append(p)
             values.append(post_dict[p])
@@ -188,6 +189,7 @@ class PostLogic(Logic):
         category = self.cl.get_post_category(_id)
         author_id = post.get('author')
         post['author'] = self.ul.get_user_by_id(author_id)
+        post['date'] = post.get("pubdate")
         post['tags'] = tags
         post["ttags"] = ','.join([t.get('name') for t in tags])
         keywords = ','.join([c.get('name') for c in category])
@@ -210,7 +212,6 @@ class PostLogic(Logic):
             self.tl.add_post_tags(pid, tags)
         if category:
             self.cl.add_post_categories(pid, category)
-        post_dict['update'] = NOW()
         with self._mc() as op:
             where = "`id`='{0}'".format(op.escape(pid))
             op.update(post_dict, where = where)

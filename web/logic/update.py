@@ -47,6 +47,18 @@ class UpdateLogic(object):
         if version < 0.13:
             self.update_comment_table()
 
+        if version < 0.14:
+            self.update_post_table()
+
+    def update_post_table(self):
+        table = self.pl.get_table()
+
+        sql="alter table {0} change `update` `pubdate` TIMESTAMP NULL".format(table)
+        self.pl.execute_sql(sql, True)
+
+        sql = "alter table {0} change `date` `update` TIMESTAMP NOT NULL".format(table)
+        self.pl.execute_sql(sql, True)
+
     def update_comment_table(self):
         t = self.col.get_table()
         sql = "alter table {0} add `type` TINYINT NOT NULL default 0;".format(t)

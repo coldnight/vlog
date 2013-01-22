@@ -62,8 +62,8 @@ create table if not exists `{1}post`(
     `md5` VARCHAR(32) NULL,
     isdraft INT NOT NULL default 1,
     allowcomment INT NOT NULL DEFAULT 1,
-    date TIMESTAMP NOT NULL,
-    `update` TIMESTAMP NULL,
+    `update` TIMESTAMP NOT NULL,
+    pubdate TIMESTAMP NULL,
     enabled TINYINT(1) NOT NULL DEFAULT 1,
     `type` TINYINT(1) NOT NULL DEFAULT 1,  -- 1:post 2:page
     PRIMARY KEY(id),

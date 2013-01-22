@@ -28,14 +28,14 @@ def handle_sitemap(logic, request):
     pages = logic.page.get_all_pages()
     for p in pages:
         path = "/page/{0}/".format(quote(p.get('link_title').encode("utf-8")))
-        urls.append(make_url(path, p.get('date')))
+        urls.append(make_url(path, p.get('pubdate')))
 
     posts = logic.post.get_all_posts()
     for p in posts:
-        date = p.get("date")
+        date = p.get("pubdate")
         path = "/{0}/{1}/{2}/{3}/".format(date.year, date.month, date.day,
                                          quote(p.get('link_title').encode("utf-8")))
-        urls.append(make_url(path, p.get('date')))
+        urls.append(make_url(path, p.get('pubdate')))
 
     cates = logic.category.get_categories().get("data")
     for c in cates:

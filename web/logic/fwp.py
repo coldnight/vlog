@@ -42,6 +42,7 @@ class FromWPLogic(object):
             for e in el.getchildren():
                 if e.tag == 'title':
                     info['title'] = e.text
+                    info['link_title'] = self.logic.post.get_link_title(e.text)
                 if e.tag == 'link':
                     info['link'] = e.text
                 if e.tag == self.content + "encoded":
@@ -49,9 +50,12 @@ class FromWPLogic(object):
                     info['source'] = e.text
 
                 if e.tag == self.wp+"post_date":
-                    info['date'] = e.text
+                    info['pubdate'] = e.text
                 if e.tag == self.wp+"post_date_gmt":
                     info['update'] = e.text
+
+                if e.tag == self.wp + "post_id":
+                    info['id'] = e.text
 
                 if e.tag == 'category':
                     if e.attrib['domain'] == 'post_tag':
