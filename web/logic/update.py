@@ -25,7 +25,10 @@ class UpdateLogic(object):
 
     def __init__(self):
         self.logger = get_logger()
-        version = self.option.version
+        try:
+            version = self.option.version
+        except:
+            version = self.__version__
         version = float(version) if version else 0
         if version < self.__version__:
             self.update(version)

@@ -19,25 +19,34 @@ from core.util import get_logger
 
 class Field(object):
     def __init__(self, fields):
-        self.field = {}
-        for field in fields:
-            n, t, nu, k, d, e = field
-            self.field[n] = {}
-            self.field[n]['field'] = n
-            self.field[n]['type'] = t
-            self.field[n]['null'] = nu
-            self.field[n]['key'] = k
-            self.field[n]['default'] = d
-            self.field[n]['extra'] = e
+        if isinstance(fields, (list, tuple)):
+            self.field = {}
+            for field in fields:
+                n, t, nu, k, d, e = field
+                self.field[n] = {}
+                self.field[n]['field'] = n
+                self.field[n]['type'] = t
+                self.field[n]['null'] = nu
+                self.field[n]['key'] = k
+                self.field[n]['default'] = d
+                self.field[n]['extra'] = e
+        if isinstance(fields, (str, unicode)):
+            self.field = fields
 
     def get_field_list(self):
-        return self.field.keys()
+        if isinstance(self.field, dict):
+            return self.field.keys()
+        return []
 
     def __getattr__(self, key):
         return self.field.get(key, None)
 
     def __str__(self):
-        return '`{0}`'.format('`, `'.join(self.field.keys()))
+        if isinstance(self.field, dict):
+            return '`{0}`'.format('`, `'.join(self.field.keys()))
+
+        if isinstance(self.field, (str, unicode)):
+            return self.field
 
 
 class DatabaseOp(object):
@@ -157,8 +166,11 @@ class DatabaseOp(object):
 
     def get_table_fields(self):
         if self.table:
-            self.cursor.execute('describe ' + self.table)
-            fields = self.cursor.fetchall()
+            try:
+                self.cursor.execute('describe ' + self.table)
+                fields = self.cursor.fetchall()
+            except:
+                fields = '*'
             return Field(fields)
 
     def escape(self, value):

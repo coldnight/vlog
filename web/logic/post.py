@@ -158,6 +158,9 @@ class PostLogic(Logic):
         values = []
         if not post_dict.has_key("pubdate"):
             post_dict['pubdate'] = NOW()
+        if not post_dict.has_key("link_title"):
+            post_dict['link_title'] = self.get_link_title(post_dict.get("title"))
+
         for p in post_dict:
             fields.append(p)
             values.append(post_dict[p])
