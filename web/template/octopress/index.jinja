@@ -17,13 +17,14 @@
         class="count">{{obj.comment_num}}</a></small>
        </p>
    </header>
-   <div class="entry-content">{{ obj.content}}</div>
+   <div class="entry-content">{{ obj.short_content}}</div>
     <small style="color:#999">Tags:
         {% for tag in obj.tags %}
         {{ tag.name }} &nbsp;
         {% endfor %}
     </small>
    <footer>
+    <a rel="full-article" href="/{{obj.date.year}}/{{obj.date.month}}/{{obj.date.day}}/{{obj.link_title}}/">Read On</a>
      {% if username and uid %}
      <a style="float:right;" rel="full-article" href="/admin/editpost/{{obj.id}}"> Edit </a>
      {% endif %}

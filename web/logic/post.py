@@ -6,7 +6,7 @@
 #   Date    :   12/12/31 10:04:12
 #   Desc    :   文章逻辑
 #
-import datetime
+import re
 from core.logic import Logic
 from core.util import NOW, utf8sub
 from .tag import TagLogic
@@ -15,6 +15,7 @@ from .user import UserLogic
 from .comment import CommentLogic
 
 class PostLogic(Logic):
+    short = re.compile(r"<p>(.*?)</p>", re.S)
     def init(self):
         self.tl = TagLogic()
         self.cl = CategoryLogic()
@@ -225,7 +226,7 @@ class PostLogic(Logic):
         post['category'] = category
         post['cids'] = [c.get('id') for c in category]
         post['comment_num'] = self.comment.count_post_comments(_id)
-        post['short_content'] = utf8sub(post.get('content'), 0, 200)
+        post['short_content'] = self.get_short_content(post.get("content"))
         return post
 
     def edit(self, pid, post_dict):
@@ -253,6 +254,10 @@ class PostLogic(Logic):
         with self._mc() as op:
             where = "`id`='{0}'".format(op.escape(pid))
             return op.remove(where=where)
+
+    def get_short_content(self, content):
+        r = self.short.findall(content)
+        return r[0] if len(r) >= 1 else content
 
     def get_link_title(self, title, num = None, edit = False, pid = None):
         num = num if num else 0
