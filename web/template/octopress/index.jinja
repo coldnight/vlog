@@ -13,7 +13,7 @@
         <a href="/category/{{ cate.name}}/" rel="category tag">{{cate.name}}</a> &nbsp;
         {% endfor %}
         <small> by <strong>{{ obj.author.name }}</strong></small>
-        <a href="/post/{{ obj.id }}#comment" title="Comment on {{obj.title}}"
+        <a href="/{{obj.date.year}}/{{obj.date.month}}/{{obj.date.day}}/{{ obj.link_title}}/#comments" title="Comment on {{obj.title}}"
         class="count">{{obj.comment_num}}</a></small>
        </p>
    </header>
