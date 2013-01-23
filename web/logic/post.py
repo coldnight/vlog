@@ -131,7 +131,8 @@ class PostLogic(Logic):
         """ 获取文章归档 """
         with self._mc() as op:
             order = {"pubdate":-1}
-            posts = op.select(order =order)
+            where = "`enabled`='1' and `type`='1'"
+            posts = op.select(where = where, order =order)
         info = {}
         for p in posts:
             p = self._insert_info(p)
