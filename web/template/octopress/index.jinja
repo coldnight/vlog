@@ -24,7 +24,7 @@
         {% endfor %}
     </small>
    <footer>
-     <a rel="full-article" href="/post/{{obj.id}}">Read On</a>
+     <a rel="full-article" href="/{{obj.date.year}}/{{obj.date.month}}/{{obj.date.day}}/{{obj.link_title}}/">Read On</a>
      {% if username and uid %}
      <a style="float:right;" rel="full-article" href="/admin/editpost/{{obj.id}}"> Edit </a>
      {% endif %}
@@ -45,4 +45,10 @@
    </nav>
 {% endif %}
 </div>
+  <script src="/static/highlight/highlight.min.js"></script>
+<link rel="stylesheet" title="Sunburst" href="/static/highlight/sunburst.min.css">
+<script>
+  hljs.tabReplace = '    ';
+  hljs.initHighlightingOnLoad();
+</script>
 {% endblock %}
