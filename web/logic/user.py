@@ -62,7 +62,7 @@ class UserLogic(Logic):
 
 
     def update(self, uid, user_dict):
-        user_dict.drop("role", None)       #  不允许更改角色
+        user_dict.pop("role", None)       #  不允许更改角色
         with self._mc() as op:
             where = "`id`='{0}'".format(op.escape(uid))
             return op.update(user_dict, where)
