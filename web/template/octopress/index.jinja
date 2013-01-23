@@ -17,7 +17,7 @@
         class="count">{{obj.comment_num}}</a></small>
        </p>
    </header>
-   <div class="entry-content">{{ obj.short_content|escape }}</div>
+   <div class="entry-content">{{ obj.content|escape }}</div>
     <small style="color:#999">Tags:
         {% for tag in obj.tags %}
         {{ tag.name }} &nbsp;
