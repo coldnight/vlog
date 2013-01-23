@@ -189,7 +189,7 @@ border-radius: 5px;
     margin-bottom:0px;
 }
 
-.archive .post {
+.archive .archive-post {
     margin-top:3px;
     margin-left:60px;
     float:left;
@@ -208,13 +208,14 @@ border-radius: 5px;
     margin-left:10px;
 }
 
-.post .archive-footer {
+.archive-post .archive-footer {
     color:#CCCCCC;
 }
 
-.post a:visited {
+.archive-post a:visited {
     color:#1863A1;
 }
-.post a:hover {
+
+.archive-post a:hover {
     color:#0181EB;
 }

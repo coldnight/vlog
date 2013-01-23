@@ -9,7 +9,7 @@
         <h1 class="date_year"><a href="/date/{{date.year}}/{{date.month}}/">{{date.year}} 年 {{ date.month}} 月</a></h1>
     </div>
 {% for obj in date.posts %}
-    <div class="post">
+    <div class="archive-post">
        <span class="date_day">{{ obj.date.day }}</span>
        <span class="archive-title">
        <a href="/{{obj.date.year}}/{{obj.date.month}}/{{obj.date.day}}/{{ obj.link_title}}/" rel="bookmark" title="Permanent Link to {{obj.title}}">{{obj.title}}</a>
