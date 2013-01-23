@@ -131,6 +131,7 @@ class Session(object):
 
 
 class BaseHandler(RequestHandler):
+    """ Handler基类,所有handler都应继承此类 """
     template_path = TEMPLATE_PATH
     _path_to_evn = {}
     _USER_ = '__CURRNET_USER__'
@@ -141,12 +142,18 @@ class BaseHandler(RequestHandler):
     cache = Memcached
 
     def login(self, username, uid, redirect = None):
+        """ 登录
+            username             登录用户名
+            uid                  登录uid
+            redirect             给定则跳转
+        """
         self.set_secure_cookie(self._USER_, username, expires_days=None)
         self.set_secure_cookie(self._USER_ID_, str(uid), expires_days = None)
         if redirect:
             self.redirect(redirect)
 
     def logout(self, redirect = None):
+        """ 退出清楚cookie, 如果给redirect就跳转 """
         self.clear_cookie(self._USER_)
         self.clear_cookie(self._USER_ID_)
         if redirect:
@@ -154,6 +161,7 @@ class BaseHandler(RequestHandler):
 
 
     def render(self, template_path, **kwargs):
+        """ 使用jinja2模板引擎渲染模板, 并将结果缓存 """
         env = BaseHandler._path_to_evn.get(self.template_path)
         if not env:
             __loader = FileSystemLoader(self.template_path)
@@ -176,6 +184,7 @@ class BaseHandler(RequestHandler):
         return Session(self.get_secure_cookie, self.set_secure_cookie)
 
     def prepare(self):
+        """ Handler处理前,如有缓存则直接输出缓存结束请求 """
         super(BaseHandler, self).prepare()
         if self.request.method == "GET" and CACHED and \
            not self.request.path.startswith("/admin") \

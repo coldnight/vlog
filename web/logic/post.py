@@ -100,17 +100,16 @@ class PostLogic(Logic):
     def get_months(self):
         """ 获取所有文章归档年月 """
         with self._mc() as op:
-            all_post = op.select()
+            order = {"pubdate":-1}
+            all_post = op.select(order = order)
         result = []
         for p in all_post:
             date = p.get("pubdate")
             year = date.year
             month = date.month
-            dst = datetime.datetime(year, month, 1)
-            info = {"year":year, "month":month, "date":dst}
+            info = {"year":year, "month":month}
             if info not in result:
                 result.append(info)
-        result = sorted(result, key = lambda r: r['date'], reverse = True)
         return result
 
     def get_by_month(self, year, month, index = 1, size = 10):
@@ -127,6 +126,31 @@ class PostLogic(Logic):
         if posts:
             posts = self.insert_info(posts)
         return self.success(posts, pageinfo)
+
+    def get_archives(self):
+        """ 获取文章归档 """
+        with self._mc() as op:
+            order = {"pubdate":-1}
+            posts = op.select(order =order)
+        info = {}
+        for p in posts:
+            p = self._insert_info(p)
+            date = p.get("pubdate")
+            year = date.year
+            month = date.month
+            key = "{0}-{1}".format(year, month)
+            if info.has_key(key):
+                info[key]["posts"].append(p)
+            else:
+                info[key] = {}
+                info[key]["year"] = year
+                info[key]["month"] = month
+                info[key]["posts"] = [p]
+                info[key]["date"] = date
+
+        result = [value for key, value in info.items()]
+        result = sorted(result, key=lambda x:x["date"], reverse=True)
+        return result
 
     def get_post_by_ids(self, ids, index = 1, size = 10):
         limit = self.handle_limit(index, size)

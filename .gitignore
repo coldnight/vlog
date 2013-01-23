@@ -12,3 +12,4 @@ tags
 web/static/upload
 web/static/*.xml
 .zcache
+./mycnf.py

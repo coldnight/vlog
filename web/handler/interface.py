@@ -55,3 +55,30 @@ class Note(InterfaceHandler):
         note_dict = {"email":email, "name":name, "url": url, "content":content}
         Logic.note.add_note(note_dict)
         self.write({"status":True})
+
+
+class Post(InterfaceHandler):
+    _url = r'/i/post/'
+    def get(self):
+        posts = Logic.post.get_posts(self, self.pageindex, self.pagesize)
+        self.write(posts)
+
+    def post(self):
+        _id = self.get_argument("id", None)
+        title = self.get_argument("title")
+        source = self.get_argument("source")
+        content = self.get_argument("content")
+        tags = self.get_argument("tags")
+        category = self.get_argument("category")
+
+        post_dict = {"title":title, "source":source, "content":content,
+                     "tags":tags, "category":category}
+
+        if _id:
+            pid = Logic.post.post(post_dict)
+        else:
+            Logic.post.edit(_id, post_dict)
+            pid = _id
+
+        post = Logic.post.get_post_by_id(pid)
+        self.write(post)
