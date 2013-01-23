@@ -211,6 +211,12 @@ class DateHandler(WebHandler):
                     title = u"{0}年 {1} 月".format(year, month),
                     base_path = "/date/{0}/{1}/".format(year, month))
 
+class ArchivesHandler(WebHandler):
+    _url = r"/archives/"
+    def get(self):
+        archives = Logic.post.get_archives()
+        self.render("archive.jinja", title=u"文章归档", archives = archives)
+
 class NotesHandler(WebHandler):
     _url = r"/notes/(?:p)*/?(\d*)/?"
     def get(self, index):
