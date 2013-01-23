@@ -108,7 +108,7 @@ class CommentLogic(Logic):
             post = titles.get(comment.get("pid"), {})
             comment['post_title'] = post.get("title")
             comment['link_title'] = post.get("link_title")
-            comment['post_date'] = post.get("pubdate")
+            comment['post_date'] = post.get("date")
 
         return comments
 
