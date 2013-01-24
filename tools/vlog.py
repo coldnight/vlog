@@ -288,8 +288,9 @@ class Post(object):
                     post_category = post_category)
         oldmd5 = MD5(content)
         path = '/tmp/{0}.md'.format(pid)
-        with open(path, 'w') as f:
-            f.write(content.encode("utf-8"))
+        if not os.path.exists(path):
+            with open(path, 'w') as f:
+                f.write(content.encode("utf-8"))
         last = os.system("{0} {1}".format(self._editor, path))
         with open(path, 'r') as f:
             if MD5(f.read()) == oldmd5:
@@ -299,18 +300,20 @@ class Post(object):
             post_dict = self.parse(path)
             p = self.request.post(id=pid, **post_dict)
             date = datetime.strptime(p.get("pubdate"), "%Y-%m-%d %H:%M:%S")
-            url = "{0}/{1}/{2}/{3}/{4}/".format(self.request.host,
+            url = u"{0}/{1}/{2}/{3}/{4}/".format(self.request.host,
                                                 date.year, date.month,
                                                 date.day, p.get("link_title"))
             print url
+            os.remove(path)
 
     def new(self, path = None):
         path = path if path else  '/tmp/{0}.md'.format(time.time())
         t = Template(new_temp.decode("utf-8"))
         content = t.render(categories = self.categories)
         oldmd5 = MD5(content)
-        with open(path, 'w') as f:
-            f.write(content.encode("utf-8"))
+        if not os.path.exists(path):
+            with open(path, 'w') as f:
+                f.write(content.encode("utf-8"))
         last = os.system("{0} {1}".format(self._editor, path))
         with open(path, 'r') as f:
             if MD5(f.read()) == oldmd5:
@@ -320,7 +323,7 @@ class Post(object):
             post_dict = self.parse(path)
             p  = self.request.post(**post_dict)
             date = datetime.strptime(p.get("pubdate"), "%Y-%m-%d %H:%M:%S")
-            url = "{0}/{1}/{2}/{3}/{4}/".format(self.request.host,
+            url = u"{0}/{1}/{2}/{3}/{4}/".format(self.request.host,
                                                 date.year, date.month,
                                                 date.day, p.get("link_title"))
             print url
@@ -328,7 +331,9 @@ class Post(object):
     def list(self, index = None, size = None):
         index = index if index else 1
         size = size if size else 10
-        posts = self.request.get(index = index, size = size).get("data")
+        r = self.request.get(index = index, size = size)
+        posts = r.get("data")
+        pageinfo = r.get("pageinfo")
         for p in posts:
             print "文章id:", p.get("id")
             print "标题:", p.get("title")
@@ -338,6 +343,8 @@ class Post(object):
                                                 date.day, p.get("link_title"))
             print u"链接:", url
             print '-'* 40
+        print "当前页", pageinfo.get("pageindex"),
+        print "总页数", pageinfo.get("totalpage")
 
 
 if __name__ == "__main__":
