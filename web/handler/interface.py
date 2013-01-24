@@ -25,7 +25,6 @@ class InterfaceHandler(BaseHandler):
             if not r.get("status"):
                 self.finish({"status":False, "errmsg":u"用户名密码错误"})
             self.user_info = r.get("data")
-            self.uid = self.user_info.get("id")
         else:
             self.finish({"status":False, "errmsg":u"没有用户名和密码"})
 
@@ -85,7 +84,8 @@ class Post(InterfaceHandler):
             Logic.post.edit(_id, post_dict)
             pid = _id
         else:
-            post_dict.update(author = self.uid)
+            import pdb;pdb.set_trace()
+            post_dict.update(author = self.user_info.get("id"))
             pid = Logic.post.post(post_dict).get("data")
 
         post = Logic.post.get_post_by_id(pid).get("data")
