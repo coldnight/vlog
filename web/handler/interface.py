@@ -14,17 +14,17 @@ from web.logic import Logic
 class InterfaceHandler(BaseHandler):
     username = property(lambda self: self.get_argument("username", None))
     password = property(lambda self: self.get_argument("password", None))
-    pageindex = property(lambda self: self.get_argument("index", 1))
+    pageindex = property(lambda self: self.get_argument("pageindex", 1))
     pagesize = property(lambda self:self.get_argument("pagesize", 10))
     def prepare(self):
         super(InterfaceHandler, self).prepare()
         if self.username and self.password:
             r = Logic.user.login(self.username, self.password)
             if not r.get("status"):
-                self.finish({"status":False})
+                self.finish({"status":False, "errmsg":u"用户名密码错误"})
             self.user_info = r.get("data")
         else:
-            self.finish({"status":False})
+            self.finish({"status":False, "errmsg":u"没有用户名和密码"})
 
     def escape(self, value):
         if isinstance(value, dict):
@@ -60,7 +60,11 @@ class Note(InterfaceHandler):
 class Post(InterfaceHandler):
     _url = r'/i/post/'
     def get(self):
-        posts = Logic.post.get_posts(self, self.pageindex, self.pagesize)
+        pid = self.get_argument("id", None)
+        if pid:
+            posts = Logic.post.get_post_by_id(pid)
+        else:
+            posts = Logic.post.get_posts(self.pageindex, self.pagesize)
         self.write(posts)
 
     def post(self):
@@ -75,10 +79,16 @@ class Post(InterfaceHandler):
                      "tags":tags, "category":category}
 
         if _id:
-            pid = Logic.post.post(post_dict)
-        else:
             Logic.post.edit(_id, post_dict)
             pid = _id
+        else:
+            pid = Logic.post.post(post_dict).get("data")
 
-        post = Logic.post.get_post_by_id(pid)
+        post = Logic.post.get_post_by_id(pid).get("data")
         self.write(post)
+
+class CategoryHandler(InterfaceHandler):
+    _url = r"/i/category/"
+    def get(self):
+        category = Logic.category.get_categories()
+        self.write(category)
