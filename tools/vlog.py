@@ -26,7 +26,7 @@ import markdown
 from jinja2 import Template
 
 DEBUG = True
-__HOST__ = "http://localhost:18888"
+__HOST__ = "http://www.linuxzen.com"
 __USER__ = ""
 __PWD__ = ""
 
