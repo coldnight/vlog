@@ -182,7 +182,7 @@ class PostLogic(Logic):
         """ 提交文章 """
         if not post_dict.has_key("isdraft"):
             post_dict['isdraft'] = 0
-        pub = False if post_dict['isdraft'] == 0 else True
+        pub = True if post_dict['isdraft'] == 0 else False
         tags = post_dict.pop('tags', None)
         category = post_dict.pop('category', None)
         fields ,values = [], []
