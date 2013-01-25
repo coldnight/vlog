@@ -4,9 +4,9 @@ import sys
 
 PORT = 18888
 
-DEBUG = False
+DEBUG = True
 
-CACHED = False
+CACHED = True
 
 CACHE_HOST = ["localhost:11211"]
 
@@ -38,4 +38,4 @@ EMAIL_ACCOUNT = "blog.linuxzen@gmail.com"
 
 EMAIL_PASSWORD = ""
 
-__version__ = (0, 1, 4)
+__version__ = (0, 1, 5)
