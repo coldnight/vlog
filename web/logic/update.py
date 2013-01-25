@@ -11,6 +11,7 @@ from mycnf import MYSQL_PRE
 from core.util import get_logger
 from .post import PostLogic
 from .category import CategoryLogic
+from .tag import TagLogic
 from .options import GlobalOption
 from .page import PageLogic
 from .comment import CommentLogic
@@ -18,6 +19,7 @@ from .comment import CommentLogic
 class UpdateLogic(object):
     pl = PostLogic()
     cl = CategoryLogic()
+    tl = TagLogic()
     pal = PageLogic()
     option = GlobalOption()
     col = CommentLogic(pl)
@@ -52,6 +54,24 @@ class UpdateLogic(object):
 
         if version < 0.14:
             self.update_post_table()
+
+        if version < 0.15:
+            self.update_post_table2()
+
+    def update_post_table2(self):
+        table = self.pl.get_table()
+        sql = "alter table {0} add `post_parent` INT NOT NULL DEFAULT 0;"\
+                .format(table)
+        self.pl.execute_sql(sql, True)
+        table = self.cl.ptc.get_table()
+        sql = "alter table {0} add `enabled` TINYINT NOT NULL DEFAULT 1;"\
+                .format(table)
+        self.cl.ptc.execute_sql(sql, True)
+
+        table = self.tl.ptt.get_table()
+        sql = "alter table {0} add `enabled` TINYINT NOT NULL DEFAULT 1;"\
+                .format(table)
+        self.tl.ptt.execute_sql(sql, True)
 
     def update_post_table(self):
         table = self.pl.get_table()

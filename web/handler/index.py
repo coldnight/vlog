@@ -247,6 +247,14 @@ class FeedHandler(StaticFileHandler):
     def get(self):
         StaticFileHandler.get(self, 'rss.xml')
 
+class WPFeedHandler(StaticFileHandler):
+    _url = "/index.php/feed"
+    def initialize(self):
+        StaticFileHandler.initialize(self, STATIC_ROOT)
+
+    def get(self):
+        StaticFileHandler.get(self, 'rss.xml')
+
 class SitemapHandler(StaticFileHandler):
     _url = r'/sitemap.xml'
     def initialize(self):

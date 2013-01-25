@@ -8,7 +8,7 @@
 #
 import re
 from core.logic import Logic
-from core.util import NOW, utf8sub
+from core.util import NOW
 from .tag import TagLogic
 from .category import CategoryLogic
 from .user import UserLogic
@@ -22,50 +22,46 @@ class PostLogic(Logic):
         self.ul = UserLogic()
         self.comment = CommentLogic(self)
 
-    def get_new_id(self):
-        with self._mc() as op:
-            order = {'id':-1}
-            _id = op.select_one(order = order).get('id')
-            _id = _id if _id else 0
-        return self.sucess(_id + 1)
-
     def count_posts(self, where =  None):
+        """ 根据条件统计文章 """
         with self._mc() as op:
             return self.success(op.count(where = where))
 
     def get_posts(self, index = 1, size = 10):
+        """ 分页获取发布文章 """
         with self._mc() as op:
             order = {"id":-1}
             limit = self.handle_limit(index, size)
-            where = "`enabled`='1' and `type`='1'"
+            where = "`enabled`='1' and `type`='1' and `isdraft`='0'"
             r = op.select(where = where, order = order, limit = limit)
         if r:  r= self.insert_info(r)
-        total = self.count_posts().get('data')
+        total = self.count_posts(where = where).get('data')
         page_info = self.handle_page(total, index, size)
         return self.success(r, page_info)
 
     def get_all_posts(self):
+        """ 获取发布的全部文章 """
         with self._mc() as op:
-            where = "`enabled`='1' and `type`='1'"
+            where = "`enabled`='1' and `type`='1' and `isdraft`='0'"
             return op.select(where = where)
 
     def get_post_by_id(self, _id):
+        """ 根据文章id获取文章 """
         with self._mc() as op:
-            where = "`id`='{0}' and `enabled`='1'"\
+            where = "`id`='{0}' and `enabled`='1' and `isdraft`='0'"\
                     " and `type`='1'".format(op.escape(_id))
             r = op.select_one(where = where)
-
         if r:
             r = self.insert_info(r)
         return self.success(r)
 
     def get_post_by_link(self, link_title, typ = 1):
+        """ 根据链接标题获取文章 """
         with self._mc() as op:
             where = "`link_title`='{0}' and `enabled`='1'"\
-                    " and `isdraft`='0' and `type`='{1}'".format(
-                        op.escape(link_title), op.escape(typ))
+                    " and `isdraft`='0' and `type`='{1}'"\
+                    .format(op.escape(link_title), op.escape(typ))
             r = op.select_one(where = where)
-
         if r:
             r = self.insert_info(r)
         return self.success(r)
@@ -79,21 +75,22 @@ class PostLogic(Logic):
                 where = "`id` in ('{0}')".format(wids)
                 posts = op.select(where = where)
             else:
-                where = "`type`='1' and `enabled`='1'"
+                where = "`type`='1' and `enabled`='1' and `isdraft`='0'"
                 limit = self.handle_limit(size = size)
                 order = {"id":-1}
                 posts = op.select(where = where, order = order, limit = limit )
-
-        result = {p.get("id") : {"title":p.get("title"),
-                                "link_title":p.get("link_title"),
-                                 "date":p.get("pubdate")} for p in posts}
-
-        print result
+        result = {
+            p.get("id") : {
+                "title":p.get("title"),
+                "link_title":p.get("link_title"),
+                "date":p.get("pubdate")
+            } for p in posts }
         return result
 
     def get_new(self, size = 5):
+        """ 获取最新的5篇文章 """
         with self._mc() as op:
-            where = "`type`='1' and `enabled`='1'"
+            where = "`type`='1' and `enabled`='1' and `isdraft`='0'"
             limit = self.handle_limit(size = size)
             order = {"id":-1}
             return op.select(where = where, order = order, limit = limit)
@@ -114,11 +111,13 @@ class PostLogic(Logic):
         return result
 
     def get_by_month(self, year, month, index = 1, size = 10):
+        """ 获取某一月份的全部文章 """
         year, month = int(year), int(month)
         nmonth, nyear = (month + 1, year) if month + 1 <= 12 else (1, year + 1)
         with self._mc() as op:
             where = "`pubdate` >= '{0}-{1}-1' and `type`='1' and enabled='1' and "\
-                    "`pubdate` < '{2}-{3}-1'".format(year, month, nyear, nmonth)
+                    "`pubdate` < '{2}-{3}-1' and `isdraft`='0'"\
+                    .format(year, month, nyear, nmonth)
             order = {"id":-1}
             limit = self.handle_limit(index, size)
             posts = op.select(where = where, order = order, limit = limit)
@@ -132,7 +131,7 @@ class PostLogic(Logic):
         """ 获取文章归档 """
         with self._mc() as op:
             order = {"pubdate":-1}
-            where = "`enabled`='1' and `type`='1'"
+            where = "`enabled`='1' and `type`='1' and `isdraft`='0'"
             posts = op.select(where = where, order =order)
         info = {}
         for p in posts:
@@ -155,11 +154,12 @@ class PostLogic(Logic):
         return result
 
     def get_post_by_ids(self, ids, index = 1, size = 10):
+        """ 根据所指定的id来获取相应的文章 """
         limit = self.handle_limit(index, size)
         with self._mc() as op:
             wids = "','".join(op.escape(ids))
             where = "`id` in ('{0}') and `enabled`='1' "\
-                    "and `type`='1'".format(wids)
+                    "and `type`='1' and `isdraft`='0'".format(wids)
             order = {"id":-1}
             posts = op.select(where = where, order = order, limit = limit)
         total = self.count_posts(where).get("data")
@@ -169,40 +169,40 @@ class PostLogic(Logic):
         return self.success(posts, page_info)
 
     def get_post_by_category(self, cid, index = 1, size = 10):
+        """ 根据分类id获取文章 """
         pids = self.cl.get_post_ids(cid)
         return self.get_post_by_ids(pids, index, size)
 
     def get_post_by_tag(self, tid, index = 1, size = 10):
+        """ 根据标签id获取文章 """
         pids = self.tl.get_post_ids(tid)
         return self.get_post_by_ids(pids, index, size)
 
     def post(self, post_dict):
-        post_dict['isdraft'] = 0
+        """ 提交文章 """
+        if not post_dict.has_key("isdraft"):
+            post_dict['isdraft'] = 0
+        pub = False if post_dict['isdraft'] == 0 else True
         tags = post_dict.pop('tags', None)
         category = post_dict.pop('category', None)
-        fields = []
-        values = []
+        fields ,values = [], []
         if not post_dict.has_key("pubdate"):
             post_dict['pubdate'] = NOW()
-        if not post_dict.has_key("link_title"):
+        if not post_dict.has_key("link_title") and pub:
             post_dict['link_title'] = self.get_link_title(post_dict.get("title"))
-
         for p in post_dict:
             fields.append(p)
             values.append(post_dict[p])
-
         with self._mc() as op:
             pid = op.insert(fields, values)
-
         if isinstance(tags, (str, unicode)):
             tags = tags.split(',')
         if isinstance(category, (str, unicode)):
             category = category.split(',')
-
         if tags:
-            self.tl.add_post_tags(pid, tags)
+            self.tl.add_post_tags(pid, tags, pub)
         if category:
-            self.cl.add_post_categories(pid, category)
+            self.cl.add_post_categories(pid, category, pub)
         return self.success(pid)
 
     def insert_info(self, posts):
@@ -213,6 +213,7 @@ class PostLogic(Logic):
         return posts
 
     def _insert_info(self, post):
+        """ 插入文章的附加信息:分类,标签,作者 """
         _id = post.get('id')
         tags = self.tl.get_post_tags(_id)
         category = self.cl.get_post_category(_id)
@@ -230,13 +231,19 @@ class PostLogic(Logic):
         return post
 
     def edit(self, pid, post_dict):
+        """ 编辑文章 """
+        if not post_dict.has_key("isdraft"):
+            post_dict['isdraft'] = 0
+        if post_dict['isdraft'] == 1:
+            post_dict["post_parent"] = pid
+            return self.post(post_dict)
+        post_dict["update"] = NOW()
         tags = post_dict.pop('tags', None)
         category = post_dict.pop('category', None)
         if isinstance(tags, (str, unicode)):
             tags = tags.split(',')
         if isinstance(category, (str, unicode)):
             category = category.split(',')
-
         if tags:
             self.tl.add_post_tags(pid, tags)
         if category:
@@ -244,16 +251,62 @@ class PostLogic(Logic):
         with self._mc() as op:
             where = "`id`='{0}'".format(op.escape(pid))
             op.update(post_dict, where = where)
-
         return self.success(pid)
 
+    def disable(self, pid):
+        """ 禁用文章 """
+        self.tl.disable(pid)
+        self.cl.disable(pid)
+        with self._mc() as op:
+            where = "`id`='{0}'".format(op.escape(pid))
+            set_dict = {"enabled":0}
+            return op.update(set_dict, where)
+
+    def enable(self, pid):
+        self.tl.enable(pid)
+        self.cl.enable(pid)
+        with self._mc() as op:
+            where = "`id`='{0}'".format(op.escape(pid))
+            set_dict = {"enabled":1}
+            return op.update(set_dict, where)
+
     def remove(self, pid):
-        #TODO 改成禁用
+        """ 根据文章id移除文章 """
         self.tl.remove_tag_post(pid)
         self.cl.remove_cate_post(pid)
         with self._mc() as op:
             where = "`id`='{0}'".format(op.escape(pid))
             return op.remove(where=where)
+
+    def get_drafts(self, index = 1, size = 10):
+        """ 获取草稿, 给定pid则获取改pid的草稿 """
+        with self._mc() as op:
+            order = {"id":-1}
+            where = "`isdraft`='1'"
+            limit = self.handle_limit(index, size)
+            r = op.select(where = where, order = order, limit = limit)
+            total = self.count_posts(where = where)
+        posts = self.insert_info(r)
+        pageinfo = self.handle_page(total, index, size)
+        return self.success(posts, pageinfo)
+
+    def get_last_post_draft(self, pid):
+        """ 获取文章的最新一条草稿 """
+        with self._mc() as op:
+            order = {"id":-1}
+            where = "`isdraft`='1' and `post_parent`='{0}'".format(op.escape(pid))
+            r = op.select_one(where = where, order = order)
+        if r:
+            return self.insert_info(r)
+
+    def get_post_drafts(self, pid):
+        """ 获取文章的所有草稿 """
+        with self._mc() as op:
+            order = {"id":-1}
+            where = "`isdraft`='1' and `post_parent`='{0}'".format(op.escape(pid))
+            r = op.select(where = where, order = order)
+        if r:
+            return self.insert_info(r)
 
     def get_short_content(self, content):
         r = self.short.findall(content)
@@ -275,4 +328,3 @@ class PostLogic(Logic):
         with self._mc() as op:
             where = "`link_title`='{0}'".format(title.encode('utf-8'))
             return op.select_one(where = where)
-

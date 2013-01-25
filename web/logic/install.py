@@ -58,6 +58,7 @@ create table if not exists `{1}post`(
     link_title VARCHAR(255) NULL,
     content TEXT NOT NULL,
     source TEXT NULL,
+    post_parent INT NOT NULL DEFAULT 0,
     author INT NOT NULL,
     `md5` VARCHAR(32) NULL,
     isdraft INT NOT NULL default 1,
@@ -75,6 +76,7 @@ create table if not exists `{1}post_to_tag`(
     id INT AUTO_INCREMENT NOT NULL,
     pid INT NOT NULL,
     tid INT NOT NULL,
+    enabled TINYINT NOT NULL DEFAULT 1,
     PRIMARY KEY(`id`),
     INDEX(`pid`)
     )character set utf8;
@@ -95,6 +97,7 @@ create table if not exists `{1}post_to_category`(
     id INT AUTO_INCREMENT NOT NULL,
     pid INT NOT NULL,
     cid INT NOT NULL,
+    enabled TINYINT NOT NULL DEFAULT 1,
     PRIMARY KEY(`id`),
     INDEX(`pid`)
     )character set utf8;

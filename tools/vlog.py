@@ -5,6 +5,8 @@
 #   E-mail  :   wh_linux@126.com
 #   Date    :   13/01/24 09:24:19
 #   Desc    :   vLog 终端脚本
+#   History :
+#               0.0.1 可以发布,修改,列出文章,可以发布便签
 #
 import os
 import sys
@@ -24,12 +26,13 @@ import markdown
 from jinja2 import Template
 
 DEBUG = True
-__HOST__ = "http://www.linuxzen.com"
+__HOST__ = "http://localhost:18888"
 __USER__ = ""
 __PWD__ = ""
 
 MD5 = lambda s: hashlib.md5(s.encode("utf-8")
                             if isinstance(s, unicode) else s).hexdigest()
+FDATE = lambda s: datetime.strptime(s, "%Y-%m-%d %H:%M:%S")
 
 ########### HTTP Helper ####################################
 class UploadForm(object):
@@ -92,7 +95,10 @@ class PostForm(object):
             value = value.encode("utf-8")
         self.params.update({key:value})
 
-    def as_params(self):
+    def as_string(self):
+        return str(self)
+
+    def __str__(self):
         return urllib.urlencode(self.params)
 
 class HttpHelper(object):
@@ -127,7 +133,7 @@ class HttpHelper(object):
         elif isinstance(self._params, PostForm):
             self._params.add_field("username", __USER__)
             self._params.add_field("password", __PWD__)
-            self.request = urllib2.Request(url, self._params.as_params())
+            self.request = urllib2.Request(url, str(self._params))
         elif isinstance(self._params, UploadForm):
             self._params.add_field("username", __USER__)
             self._params.add_field("password", __PWD__)
@@ -227,7 +233,7 @@ class Note(object):
         return self.request.get(index, size)
 
 
-new_temp = """Title is here
+new_temp = """Title is here  ::: (标题前面加*可保存为草稿)
 ====================
 Content is here
 ====================
@@ -236,7 +242,7 @@ Content is here
 ====================
 Tags:用,号隔开"""
 
-edit_temp = """{{post.title}}
+edit_temp = """{{post.title}}  ::: (标题前面加*可保存为草稿)
 ====================
 {{post.source}}
 ====================
@@ -256,7 +262,7 @@ class Post(object):
 
         return
 
-    def parse(self, path):
+    def parse_post(self, path):
         post_dict = {"source":''}
         categories = []
         with open(path, 'r') as f:
@@ -265,9 +271,12 @@ class Post(object):
                 if line.strip() == '='* 20:
                     step += 1
                     continue
-
                 if step == 0:
-                    post_dict["title"] = line.strip()
+                    post_dict["isdraft"] = 0
+                    title =  line.strip().split(":::")[0].strip()
+                    post_dict["title"] = title
+                    if title.startswith("*"):
+                        post_dict["isdraft"] = 1
                 if step == 1:
                     post_dict["source"] += line
                 if step == 2:
@@ -281,9 +290,22 @@ class Post(object):
         return post_dict
 
     def edit(self, pid):
-        post = self.request.get(id = pid).get("data")
+        result = self.request.get(id = pid, action="edit")
+        post = result.get("post", {}).get("data")
+        draft = result.get("draft")
+        yes = 'n'
+        if draft:
+            old_date = FDATE(post.get("update"))
+            new_date = FDATE(draft.get("update"))
+            if old_date <= new_date:
+                while True:
+                    yes = raw_input("有一篇草稿保存日期比当前文章要晚,"
+                                    "是否操作草稿(Y/N): ")
+                    if yes.lower() in ["y", "n"]: break
+                if yes.lower() == "y":
+                    post = draft
         post_category = [c.get("name") for c in post.get("category")]
-        t = Template(edit_temp)
+        t = Template(edit_temp.decode("utf-8"))
         content = t.render(post = post, categories = self.categories,
                     post_category = post_category)
         oldmd5 = MD5(content)
@@ -297,14 +319,19 @@ class Post(object):
                 print "没有更改"
                 sys.exit(2)
         if last == 0:
-            post_dict = self.parse(path)
+            post_dict = self.parse_post(path)
             p = self.request.post(id=pid, **post_dict)
-            date = datetime.strptime(p.get("pubdate"), "%Y-%m-%d %H:%M:%S")
+            date = FDATE(p.get("pubdate"))
             url = u"{0}/{1}/{2}/{3}/{4}/".format(self.request.host,
                                                 date.year, date.month,
                                                 date.day, p.get("link_title"))
-            print url
+            if post_dict.get("isdraft") == 1:
+                print "草稿已保存"
+            else:
+                print "已发布,文章链接:",
+                print url
             os.remove(path)
+
 
     def new(self, path = None):
         path = path if path else  '/tmp/{0}.md'.format(time.time())
@@ -320,19 +347,26 @@ class Post(object):
                 print "没有更改"
                 sys.exit(2)
         if last == 0:
-            post_dict = self.parse(path)
+            post_dict = self.parse_post(path)
             p  = self.request.post(**post_dict)
             date = datetime.strptime(p.get("pubdate"), "%Y-%m-%d %H:%M:%S")
             url = u"{0}/{1}/{2}/{3}/{4}/".format(self.request.host,
                                                 date.year, date.month,
                                                 date.day, p.get("link_title"))
-            print url
+            if post_dict.get("isdraft") == 1:
+                print "草稿已保存"
+            else:
+                print "已发布,文章链接:",
+                print url
 
     def list(self, index = None, size = None):
         index = index if index else 1
         size = size if size else 10
         r = self.request.get(index = index, size = size)
         posts = r.get("data")
+        if not posts:
+            print "文章列表为空"
+            return
         pageinfo = r.get("pageinfo")
         for p in posts:
             print "文章id:", p.get("id")
@@ -346,6 +380,10 @@ class Post(object):
         print "当前页", pageinfo.get("pageindex"),
         print "总页数", pageinfo.get("totalpage")
 
+        return
+
+    def remove(self, pid):
+        self.request.get(id = pid, action="remove")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -354,17 +392,20 @@ if __name__ == "__main__":
     note_parser.add_argument(dest="content", default=None, nargs="?")
 
     post_parser = subparsers.add_parser("post", help="Post")
-    post_parser.add_argument("-l", action="store_const", dest="action",
-                             default="list", const="list",
+    post_parser.add_argument("-l", "--list", action="store_const",
+                             dest="action", default="list", const="list",
                              help="List posts")
 
-    post_parser.add_argument("-e", action="store_const", dest="action",
-                             default="list", const="edit",
+    post_parser.add_argument("-e", "--edit",action="store_const",
+                             dest="action", default="list", const="edit",
                              help="Edit id [pid] post")
 
-    post_parser.add_argument("-n", action="store_const", dest="action",
-                             default="list", const="new",
+    post_parser.add_argument("-n", "--new", action="store_const",
+                             dest="action", default="list", const="new",
                              help = "Add a new post")
+    post_parser.add_argument("-r", "--remove", action="store_const",
+                             dest="action", default="list", const="remove",
+                             help = "Delete a post")
     post_parser.add_argument(dest="value", default=None, nargs="?")
     post_parser.add_argument(dest="value2", default=None, nargs="?")
 
@@ -397,3 +438,5 @@ if __name__ == "__main__":
             Post().new(path)
         elif args.action == "list":
             Post().list(args.value, args.value2)
+        elif args.action == "remove":
+            Post().remove(args.value)

@@ -23,7 +23,7 @@ class post_to_category(Logic):
     def get_post_ids(self, cid):
         """ 根据类别id获取所有文章id """
         with self._mc() as op:
-            where = "`cid`='{0}'".format(op.escape(cid))
+            where = "`cid`='{0}' and `enabled`='1'".format(op.escape(cid))
             r = op.select(where = where)
 
         return [c.get('pid') for c in r if c.get('pid') is not None]
@@ -31,10 +31,10 @@ class post_to_category(Logic):
     def remove(self,pid,  cids):
         with self._mc() as op:
             wids = "','".join(op.escape(cids))
-            where = "`pid`='{0}' and `cid` NOT IN('{1}')".format(op.escape(pid),
-                                                                 wids)
+            where = "`pid`='{0}' and `cid` NOT IN('{1}')"\
+                    .format(op.escape(pid), wids)
             op.remove(where = where)
-
+        return
 
     def add_post_categories(self, pid, cids):
         self.remove(pid, cids)
@@ -51,19 +51,33 @@ class post_to_category(Logic):
 
     def check_exists(self, pid, cid):
         with self._mc() as op:
-            where = "`pid`='{0}' and `cid`='{1}'".format(op.escape(pid),
-                                                         op.escape(cid))
+            where = "`pid`='{0}' and `cid`='{1}'"\
+                    .format(op.escape(pid), op.escape(cid))
             return op.select_one(where=where)
 
     def count_posts(self, cid):
         with self._mc() as op:
-            where = "`cid`='{0}'".format(op.escape(cid))
+            where = "`cid`='{0}' and `enabled`='1'".format(op.escape(cid))
             return op.count(where)
 
     def remove_cate_post(self, pid):
         with self._mc() as op:
             where = "`pid`='{0}'".format(op.escape(pid))
             return op.remove(where = where)
+
+    def disable(self, pid):
+        """ 禁用类别到文章的映射 """
+        with self._mc() as op:
+            where = "`pid`='{0}'".format(op.escape(pid))
+            set_dict = {"enabled":0}
+            return op.update(set_dict, where = where)
+
+    def enable(self, pid):
+        """ 启用类别到文章的映射 """
+        with self._mc() as op:
+            where = "`pid`='{0}'".format(op.escape(pid))
+            set_dict = {"enabled":1}
+            return op.update(set_dict, where = where)
 
 class CategoryLogic(Logic):
     def init(self):
@@ -105,7 +119,7 @@ class CategoryLogic(Logic):
         cate['post_num'] = posts_num
         return cate
 
-    def add_post_categories(self, pid, cids):
+    def add_post_categories(self, pid, cids, pub = True):
         dst_cids = []
         for cid in cids:
             if isinstance(cid, (int, long)):
@@ -119,6 +133,8 @@ class CategoryLogic(Logic):
                 else:
                     dst_cids.append(self.add_category(cid).get("data").get("id"))
         self.ptc.add_post_categories(pid, dst_cids)
+        if not pub:
+            self.disable(pid)
 
     def get_post_category(self, pid):
         cids = self.ptc.get_category_ids(pid)
@@ -146,3 +162,9 @@ class CategoryLogic(Logic):
     def remove_cate_post(self, pid):
         """ 移除文章时移除文章所在类别的映射 """
         self.ptc.remove_cate_post(pid)
+
+    def disable(self, pid):
+        self.ptc.disable(pid)
+
+    def enable(self, pid):
+        self.ptc.enable(pid)

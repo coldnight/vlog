@@ -229,7 +229,7 @@ class RemoveHandler(AdminHandler):
     _url = r"/admin/del/(\w+)/(\d+)/?"
     def get(self, item, _id):
         if item == 'post' or item == 'page':
-            Logic.post.remove(_id)
+            Logic.post.disable(_id)
             redirect = "/admin/add"+item
 
         if item == "comment":

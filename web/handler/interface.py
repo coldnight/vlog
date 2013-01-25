@@ -63,11 +63,21 @@ class Post(InterfaceHandler):
     _url = r'/i/post/'
     def get(self):
         pid = self.get_argument("id", None)
+        action = self.get_argument("action", "posts")
         if pid:
-            posts = Logic.post.get_post_by_id(pid)
+            if action == "remove":
+                Logic.post.disable(pid)
+                result = ""
+            elif action == "edit":
+                post = Logic.post.get_post_by_id(pid)
+                draft = Logic.post.get_last_post_draft(pid)
+                result = {"post":post, "draft":draft}
         else:
-            posts = Logic.post.get_posts(self.pageindex, self.pagesize)
-        self.write(posts)
+            if action == "posts":
+                result = Logic.post.get_posts(self.pageindex, self.pagesize)
+            elif action== "drafts":
+                result = Logic.post.get_drafts(self.pageindex, self.pagesize)
+        self.write(result)
 
     def post(self):
         _id = self.get_argument("id", None)
@@ -76,15 +86,16 @@ class Post(InterfaceHandler):
         content = self.get_argument("content")
         tags = self.get_argument("tags")
         category = self.get_argument("category")
+        isdraft = self.get_argument("isdraft", 0)
 
         post_dict = {"title":title, "source":source, "content":content,
-                     "tags":tags, "category":category}
+                     "tags":tags, "category":category,
+                     "isdraft":int(isdraft)}
 
         if _id:
             Logic.post.edit(_id, post_dict)
             pid = _id
         else:
-            import pdb;pdb.set_trace()
             post_dict.update(author = self.user_info.get("id"))
             pid = Logic.post.post(post_dict).get("data")
 
