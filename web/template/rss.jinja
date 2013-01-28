@@ -32,7 +32,7 @@
             <category><![CDATA[{{ tag.name }}]]></category>
             {% endfor %}
             <guid isPermaLink="true">http://{{request.host}}/{{post.date.year}}/{{post.date.month}}/{{post.date.day}}/{{post.link_title}}/</guid>
-            <description><![CDATA[{{ post.short_content }}<a href="http://{{request.host}}/post/{{post.id}}">Continue reading <span class="meta-nav">&#8594;</span></a>]]></description>
+            <description><![CDATA[{{ post.short_content }}<a href="http://{{request.host}}/{{post.date.year}}/{{post.date.month}}/{{post.date.month}}/{{post.link_title}}/">Continue reading <span class="meta-nav">&#8594;</span></a>]]></description>
             <content:encoded><![CDATA[{{ post.content }} ]]></content:encoded>
             <slash:comments>{{ post.coment_num }}</slash:comments>
 		</item>
