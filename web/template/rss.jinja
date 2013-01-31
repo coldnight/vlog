@@ -22,7 +22,7 @@
 		<item>
             <title>{{ post.title }}</title>
             <link>http://{{ request.host }}/{{post.date.year}}/{{post.date.month}}/{{post.date.day}}/{{post.link_title}}/</link>
-            <comments>http://{{ request.host}}/post/{{post.id}}#comments</comments>
+            <comments>http://{{ request.host}}/{{post.date.year}}/{{post.date.month}}/{{post.date.day}}/{{post.link_title}}/#comments</comments>
             <pubDate>{{ post.rss_date }}</pubDate>
             <dc:creator>{{ post.author.name }}</dc:creator>
             {% for cate in post.category %}
