@@ -20,7 +20,7 @@ class post_to_tag(Logic):
 
     def get_tag_pids(self, tid):
         with self._mc() as op:
-            where = "`tid`='{0}' and `enabled`='0'".format(op.escape(tid))
+            where = "`tid`='{0}' and `enabled`='1'".format(op.escape(tid))
             r = op.select(where = where)
             return [p.get('pid') for p in r]
 

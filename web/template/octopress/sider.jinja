@@ -43,7 +43,7 @@
     <h1>标签</h1>
     <p id="top_tags">
     {% for tagi in tags %}
-        <a title="{{tagi.name}}" href="/tag/{{tagi.name}}/">{{tagi.name}}</a> <span class="tag_meta">({{tagi.post_num}})</span> 
+        <a title="{{tagi.name}}" href="/tag/{{tagi.name}}/"><font size="{{tagi.post_num}}">{{tagi.name}}</font></a>
     {% endfor %}
     </p>
 </section>

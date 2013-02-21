@@ -51,7 +51,11 @@
 
 
 </head>
+{% if base_path %}
 <body>
+{% else %}
+<body class="collapse-sidebar">
+{% endif %}
   <header role="banner">
     <hgroup>
     <h1><a href="/">{{SITE_TITLE}}</a></h1>
