@@ -76,7 +76,7 @@ class Install(BaseHandler):
                             "author":admin_id.get("data"),
                             }
                 Logic.post.post(init_post)
-                self.admin_login(username, admin_id.get("data"))
+                Logic.user.admin_login(username, admin_id.get("data"))
             handle_sitemap(Logic, self.request)
             handle_rss(Logic, self.request)
             self.write(admin_id)
